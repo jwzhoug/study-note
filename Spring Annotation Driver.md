@@ -13,8 +13,8 @@
   * `base-package=""`属性用来指定具体的包路径
 
   * `scoped-proxy=""` 这个属性指定使用什么杨的动态代理方式来实现，取值：
-    * interfaces : 使用jdk 的基于接口的动态代理
-    * targetClass : 使用 cglib的基于类的方法拦截调用的动态代理
+    * `interfaces` : 使用 jdk 的基于接口的动态代理
+    * `targetClass` : 使用 cglib的基于类的方法拦截调用的动态代理
   * `name-generator=""`: 用于自定义命名规则的属性，后续会有介绍
   * `use-default-filters=""` : 暂时不知道用法
   * `resource-pattern="" : 暂时不知道用法`
