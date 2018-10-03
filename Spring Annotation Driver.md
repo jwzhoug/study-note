@@ -240,3 +240,82 @@ public class BeanAnnotation {
 ```xml
 <context:component-scan base-package="xxx.xxx.xxx" name-generator="xxx.xxx.MyScopeMetaDataResolverr"/>
 ```
+## 1.6 自动装配 @AutoWired
+
+```java
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Autowired {
+    boolean required() default true;
+}
+```
+
+**从源码我们可以看出，他可以用于方法，字段，构造方法，参数，以及注解**
+
+### 1.6.1 required属性
+
+**从源码中我们可以看到，该注解中定义了一个 required属性，默认是true,作用是如果在装配过程中找不到匹配的bean,那么会抛出异常，相当于null值检查**,功能和 `@Required` 这个注解相同
+
+**如果指定成false,那么将不会做这样的null检查，从Spring Framework 5.0开始，您还可以使用`@Nullable`注释（任何包中的任何类型，例如`javax.annotation.Nullable`来自JSR-305），来达到  required = false的效果。**
+
+### 1.6.2 使用方法
+
+同XMl中类似，不过`@AutoWired` 注解是通过byType+ByName.的方式去自动匹配的：
+
+* 作用于字段：首先先通过byType的方式去查找有没有匹配类型的bean,如果只有一个直接匹配，如果有多个，以字段名为name，去匹配对应name的bean,如何指定对应的 name呢？ 看 1.7 节，如果没有,就要如同 1.6.1 节的内容所说
+
+* 作用于方法：首先方法的参数数量，名称没有要求。匹配方式同上面的类似，不过name改成参数名，如何指定对应的 name呢？ 看 1.7 节
+
+* 作用于构造方法：
+
+* 也可以混合使用
+
+* 特殊的用法：
+
+  * 您还可以使用`@Autowired` 修饰那些众所周知的解析依赖接口：`BeanFactory`，`ApplicationContext`，`Environment`，`ResourceLoader`，`ApplicationEventPublisher`，和`MessageSource`。这些接口及其扩展接口（如`ConfigurableApplicationContext`或`ResourcePatternResolver`）会自动解析，无需特殊设置。 
+
+  * 通过将注释添加到容器中存在的特定类型的bean的数组（或集合）的字段或方法，也可以得到当前容器中所有这样类型的bean , 例子： 
+
+    ```java
+    interface Person {
+        void say();
+    }
+    ```
+
+    ```java
+    @Component
+    public class Men implements Person {
+        @Override
+        public void say() {
+            System.out.println(" i am men");
+        }
+    }
+    ```
+
+    ```java
+    @Component
+    public class Women implements Person {
+        @Override
+        public void say() {
+            System.out.println(" i am women");
+        }
+    }
+    ```
+
+    ```java
+    @Component
+    public class AutoWiredDemo {
+    
+        private List<Person> persons;
+    	@Autowired
+    	private Map<String,Person> personMap;
+    	
+    	@Autowired
+        public void setPersons(List<Person> persons) {
+            this.persons = persons;
+        }
+    }
+    ```
+    **如果希望按特定顺序对数组或列表中的项进行排序，则目标bean可以实现`org.springframework.core.Ordered`接口或使用`@Order`或标准`@Priority`注释。否则，它们的顺序将遵循容器中相应目标bean定义的注册顺序。** 
+
