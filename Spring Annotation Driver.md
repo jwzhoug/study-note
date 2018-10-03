@@ -267,7 +267,7 @@ public @interface Autowired {
 
 * 作用于方法：首先方法的参数数量，名称没有要求。匹配方式同上面的类似，不过name改成参数名，如何指定对应的 name呢？ 看 1.7 节
 
-* 作用于构造方法：
+* 作用于构造方法：如果存在多个带参数的构造方法，那么该注解只能用于一个构造方法之上，匹配方式同上，如果只存在一个带参数的构造函数，那么不需要写这个注解，也能得到同样的处理。
 
 * 也可以混合使用
 
@@ -318,4 +318,56 @@ public @interface Autowired {
     }
     ```
     **如果希望按特定顺序对数组或列表中的项进行排序，则目标bean可以实现`org.springframework.core.Ordered`接口或使用`@Order`或标准`@Priority`注释。否则，它们的顺序将遵循容器中相应目标bean定义的注册顺序。** 
+
+## 1.7 基于限定符的范围控制 @Qualifier
+
+```java
+interface Person {
+    void say();
+}
+```
+
+```java
+@Component
+public class Men implements Person {
+    @Override
+    public void say() {
+        System.out.println(" i am men");
+    }
+}
+```
+
+```java
+@Component
+public class Women implements Person {
+    @Override
+    public void say() {
+        System.out.println(" i am women");
+    }
+}
+```
+
+```java
+@Component
+public class AutoWiredDemo {
+    
+	@Autowired
+    @Qualifier("men")
+    private Person person;
+    
+}
+
+```
+```java
+@Component
+public class AutoWiredDemo {
+    
+    private Person person;
+	
+   	@Autowired
+    public void setPersons( @Qualifier("men")Person person) {
+        this.person = person;
+    }
+}
+```
 
