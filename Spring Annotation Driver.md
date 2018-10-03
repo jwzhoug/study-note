@@ -6,7 +6,7 @@
 
 ## 1.1 使用注解的前置条件：
 
-* 使用`<context:component-scan base-package="xxx.xxx.xxx"/>`,**这样配置之后类上的注解，以及类中字段方法等的注解才能被spring发现** 
+* 使用`<context:component-scan base-package="xxx.xxx.xxx"/>`,**这样配置之后类上的注解，以及类中字段方法等的注解才能被spring发现兵注册成bean** 
 
   这个标签还有很多别的属性可以指定这里介绍一部分
 
@@ -16,7 +16,7 @@
     * `interfaces` : 使用 jdk 的基于接口的动态代理
     * `targetClass` : 使用 cglib的基于类的方法拦截调用的动态代理
   * `name-generator=""`: 用于自定义命名规则的属性，后续会有介绍
-  * `use-default-filters=""` : 暂时不知道用法
+  * `use-default-filters=""` : 默认为true , 会扫描指定下的所有被 1.2 中说所注解修饰的类，并且注册成bean, 指定 false 请看 1.1.1 的具体说明
   * `resource-pattern="" : 暂时不知道用法`
   * `scope-resolver=""` : 暂时不知道用法
 
@@ -39,6 +39,21 @@
 **总结**：推荐使用上面第一种方式。不推荐使用`<context:annotation-config></context:annotation-config>`
 
 ### 1.1.1 使用过滤器进行自定义扫描
+
+`<context:component-scan/>`这个标签`use-default-filters="true"默认为true`,会扫描指定下的所有被 1.2 中说所注解修饰的类，并且注册成bean，但是有的情况我们需要一些更灵活的使用，那么它有有两个子标签：
+
+* `<context:include-filter type="" expression=""/>`:用于提供指定需要包含的项
+* `<context:exclude-filter type="" expression=""/>` :用于提供指定需要过滤的项
+
+| Filter Type | Examples Expression        | Description                                                  |
+| :---------: | -------------------------- | ------------------------------------------------------------ |
+| annotation  | org.example.SomeAnnotation | 符合SomeAnnoation的target class                              |
+| assignable  | org.example.SomeClass      | 指定class或interface的全名                                   |
+|   aspectj   | org.example..*Service+     | AspetJ语法                                                   |
+|    regex    | org.example.Default.*      | 正则表达式                                                   |
+|   custom    | org.example.MyTypeFilter   | Spring3新增自订Type,称作org.springframework.core.type.TypeFilter |
+
+**注意：使用两个子标签，指定`<context:component-scan/>`的`use-default-filters="false"`,才有效果**
 
 ## 1.2 作用于类的注解
 
