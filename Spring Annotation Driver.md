@@ -275,6 +275,8 @@ public @interface Autowired {
 
   * 您还可以使用`@Autowired` 修饰那些众所周知的解析依赖接口：`BeanFactory`，`ApplicationContext`，`Environment`，`ResourceLoader`，`ApplicationEventPublisher`，和`MessageSource`。这些接口及其扩展接口（如`ConfigurableApplicationContext`或`ResourcePatternResolver`）会自动解析，无需特殊设置。 
 
+    **由于`@AutoWired`是由 `BeanpostProcessor` 处理的,所以该注解不能用于 `BeanpostProcessor`和`BeanFactoryPostProcessor`类型的字段,他们必须适使用`XMl`或则`@Bean`注解加载**.
+
   * 通过将注释添加到容器中存在的特定类型的bean的数组（或集合）的字段或方法，也可以得到当前容器中所有这样类型的bean , 例子： 
 
     ```java
