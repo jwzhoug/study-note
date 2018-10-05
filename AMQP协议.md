@@ -10,7 +10,7 @@ AMQP协议的全称是：Advanced Message Queuing Protocol（高级消息队列�
 
 AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试图在能力所及的范围内，为各位读者将AMQP协议的核心要点讲清楚。为了达到这个目的，首先将AMQP协议的原理用下图进行一个全面呈现，然后在详细讲解图中的每一个要点：
 
- ![20170918215545604](E:\文档\study-note\AMQP协议.assets/20170918215545604.png)
+ ![](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/20170918215545604.png)
 
 从上图我们可以看到AMQP协议的各个组成部分： 
 
