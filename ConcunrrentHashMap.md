@@ -375,7 +375,7 @@ static final class TreeBin<K,V> extends Node<K,V> {
 ### 实例初始化
 实例化ConcurrentHashMap时倘若声明了table的容量，在初始化时会根据参数调整table大小，==确保table的大小总是2的幂次方==。默认的table大小为16. 
 上面介绍成员变量也介绍过，table 这个容器的初始化是延迟到了第一次put 的时候执行
-![1535687738304](E:\文档\markdown_Note\ConcunrrentHashMap.assets\1535687738304.png)
+![1535687738304](E:\文档\study-note\ConcunrrentHashMap.assets\1535687738304.png)
 ```java
 private final Node<K,V>[] initTable() {
         Node<K,V>[] tab; // table 变量的方法内临时变量

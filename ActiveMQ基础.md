@@ -249,7 +249,7 @@ KahaDB 是从 ActiveMQ **5.4 开始默认的持久化插件**。KahaDb 恢复时
 
 ##### 2.2.5.4.4 KahaDB 内部存储结构
 
-![1536822002207](E:\文档\markdown_Note\MQ.assets\1536822002207.png)
+![1536822002207](E:\文档\study-note\MQ.assets\1536822002207.png)
 
 - **Data logs**：存放完整的每条消息(包括事务、目的地、id、优先级、具体内容等)和producerSequenceIdTracker(用来验证每个消息生成者发送的消息是否重复的数据结构)。它随着消息数量的增多，如每32M一个文件，文件名按照数字进行编号，如db-1.log、db-2.log、db-3.log … 
 
@@ -344,7 +344,7 @@ KahaDB 是从 ActiveMQ **5.4 开始默认的持久化插件**。KahaDb 恢复时
 
 同步异步数据流转图：
 
-![1536739013027](E:\文档\markdown_Note\MQ.assets\1536739013027.png)
+![1536739013027](E:\文档\study-note\MQ.assets\1536739013027.png)
 
 ##### 2.2.6.3 producerWindow
 
@@ -696,9 +696,9 @@ Message = ActiveMQTextMessage {...... redeliveryCounter = 4, text = 这是发送
 
 为了解决这个问题，ActiveMQ中引入了“死信队列”（Dead Letter Queue）的概念。即一条消息再被重发了多次后（**默认为重发6次redeliveryCounter==6**），将会被ActiveMQ移入“死信队列”。开发人员可以在这个Queue中查看处理出错的消息，进行人工干预。
 
-![1537166690430](E:\文档\markdown_Note\ActiveMQ基础.assets\1537166690430.png)
+![1537166690430](E:\文档\study-note\ActiveMQ基础.assets\1537166690430.png)
 
-默认情况下“死信队列”只接受PERSISTENT Message，如果NON_PERSISTENT Message超过了重发上限，将直接被删除。以下配置信息可以让NON_PERSISTENT Message在超过重发上限后，也移入“死信队列”：
+**默认情况下“死信队列”只接受PERSISTENT Message，如果NON_PERSISTENT Message超过了重发上限，将直接被删除。以下配置信息可以让NON_PERSISTENT Message在超过重发上限后，也移入“死信队列”**：
 
 ```xml
 <policyEntry queue=">">  
@@ -708,7 +708,7 @@ Message = ActiveMQTextMessage {...... redeliveryCounter = 4, text = 这是发送
 </policyEntry>
 ```
 
-另外，上文提到的默认重发次数redeliveryCounter的上限也是可以进行设置的，为了保证消息异常情况下尽可能小的影响消费者端的处理效率，实际工作中建议将这个上限值设置为3。原因上文已经说过，如果消息本身的业务内容就存在问题，那么重发多少次也没有用。
+**另外，上文提到的默认重发次数redeliveryCounter的上限也是可以进行设置的，为了保证消息异常情况下尽可能小的影响消费者端的处理效率，实际工作中建议将这个上限值设置为3。原因上文已经说过，如果消息本身的业务内容就存在问题，那么重发多少次也没有用**。
 
 ```java
 RedeliveryPolicy redeliveryPolicy = connectionFactory.getRedeliveryPolicy();
@@ -733,7 +733,7 @@ redeliveryPolicy.setMaximumRedeliveries(3);
 
 如果选择使用acknowledge模式，那么你至少有4种方式使用它，且这四种方式的性能区别很大：
 
-- AUTO_ACKNOWLEDGE方式：这种方式下，当消费者端通过receive方法或者MessageListener监听方式从服务端得到消息后（无论是pul方式还是push方式），消费者连接会话会自动认为消费者端对消息的处理是成功的。但请注意，这种方式下消费者端不一定是向服务端一条一条ACK消息；
+- AUTO_ACKNOWLEDGE方式：这种方式下，当消费者端通过receive方法或者MessageListener监听方式从服务端得到消息后（无论是pul方式还是push方式），消费者连接会话会自动认为消费者端对消息的处理是成功的。但请注意，这种方式下消费者端不一定是向服务端一条一条发送ACK消息；
 - CLIENT_ACKNOWLEDGE方式：这种方式下，当消费者端通过receive方法或者MessageListener监听方式从服务端得到消息后（无论是pul方式还是push方式），必须显示调用消息中的acknowledge方法。如果不这样做，ActiveMQ服务器端将不会认为这条消息处理成功：
 
 ```java
@@ -770,7 +770,7 @@ connection.start();
 “延迟确认”的数量阀值：prefetch * 0.65 
 “延迟确认”的时间阀值：> optimizeAcknowledgeTimeOut
 
-`**DUPS_OK_ACKNOWLEDGE**`方式也是一种“**延迟确认**”策略，**如果目标队列是Queue模式，那么它的工作策略与`AUTO_ACKNOWLEDGE`方式是一样的**。**也就是说，如果这时prefetchSize =1 或者没有开启optimizeACK，也会逐条消息发送ACK标示**；如果目标队列是Topic模式，那么无论 optimizeACK 是否开启，都会在消费的消息个数>=prefetch * 0.5时，批量确认这些消息。
+`**DUPS_OK_ACKNOWLEDGE**`方式也是一种“**延迟确认**”策略，**如果目标队列是Queue模式，那么它的工作策略与`AUTO_ACKNOWLEDGE`方式是一样的**。**如果这时prefetchSize =1 或者没有开启optimizeACK，也会逐条消息发送ACK标示**；如果目标队列是Topic模式，那么无论 optimizeACK 是否开启，都会在消费的消息个数>=prefetch * 0.5时，批量确认这些消息。
 
 ## 队列模式的demo
 
