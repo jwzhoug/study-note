@@ -48,7 +48,7 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 ![20170918222045857](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/20170918222045857.png)
 
 其中非PAYLOAD部分，在网络协议的应用层说明Channel的工作状态（当然还有说明整个AMQP消息的长度区域：SIZE），我**们真正需要的内容存在PAYLOAD区域。**PAYLOAD区域（译文称为‘交付区’）的格式如下（可以在《OASIS Advanced Message Queueing Protocol (AMQP) Version 1.0》文档的第3部分：messaging第82页找到详细说明）：
-![1537616537289](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets\1537616537289.png)
+![1537616537289](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/1537616537289.png)
 
 在PAYLAOD区域一共包含7个数据区域：header、delivery-annotations（传递注释）、message-annotations（消息注释）、properties（属性）、application-properties（应用属性）、application-data（应用数据）、footer。这些元素的作用如下：
 
@@ -62,7 +62,7 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
 * properties（属性）：从整个AMQP消息的properties属性开始，到AMQP消息的application-data部分结束，才是AMQP消息的正文内容（译文称为‘裸消息’）。**Properties属性记录了AMQP消息正文的那些‘不可变’属性**。**在properties部分只能传递规范的、标准的、经过ISO/IEC组织定义的属性。**例如：消息id、分组id、发送者id、内容编码等。以下是AMQP协议文档中对Properties部分属性的描述（只能包含这些信息）：
 
-  ![1537616838034](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets\1537616838034.png) 
+  ![1537616838034](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/1537616838034.png) 
 
 * application-properties（应用属性）：在这部分数据中主要记录和应用有关的数据，AMQP的实现产品（例如RabbitMQ）需要用这部分数据决定其处理逻辑。例如：送入哪一个Exchange、消息的Routing值是什么、是否进行持久化等;
 
