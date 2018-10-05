@@ -45,7 +45,7 @@ ActiveMQ支持多种消息协议，包括AMQP协议 MQTT协议 Openwire协议 St
         </transportConnectors>123456789101112131415161718
 ```
 
-以上配置了openwire协议的接入端口号为本机所有IP设备的61616（0.0.0.0代表本机所有IP设备）；配置amqp协议的接入端口号为本机所有IP设备的5672；配置stomp协议的接入端口号为本机所有IP设备的61613，等等。这里注意以下几个事实：
+以上配置了openwire协议的接入端口号为本机所有IP设备的61616（0.0.0.0代表本机所有IP设备）；配置amqp协议的接入端口号为本机所有IP设备的5672；配置stomp协议的接入端口号为本机所有IP设备的61613，等等。**这里注意以下几个事实**：
 
 - 每一个`transportConnector`标记的name属性和uri属性都必须填写，name属性的值可以随便填写，它将作为一个`Connector`元素，显示在ActiveMQ管理界面的`Connections`栏目中；
 - 每一个`transportConnector`标记的uri元素，都有固定写法：uri头是指定的协议名称，例如amqp mqtt stomp等。然后是HOST/IP域名，指定端口监听所在的路由信息；**请不要使用localhost或者127.0.0.1这样的回环地址，否则无法通过网络连接到ActiveMQ**；接下来是端口信息，**指定的端口不能重复**，否则会产生冲突；
@@ -107,7 +107,7 @@ public class JMSProducer {
 
 那么各位读者您是否觉得上一小节那样的连接端口配置太过冗长，不好进行管理？确实是这样，并且实际工作中我们也只会使用几种固定的协议。所以**ActiveMQ在Version 5.13.0+ 版本后，将OpenWire, STOMP, AMQP, MQTT这四种主要协议的端口监听进行了合并，并使用auto关键字进行表示**。也就是说，ActiveMQ将监听这一个端口的消息状态，并自动匹配合适的协议格式。配置如下：
 
-```
+```xml
 <transportConnectors>
     <transportConnector name="auto" uri="auto://0.0.0.0:61617?maximumConnections=1000" />
 </transportConnectors>123

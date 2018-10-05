@@ -59,7 +59,7 @@ JMS中对非持久化消息和持久化消息的称呼分别是：`NON_PERSISTEN
 
 # 2. ActiveMQ
 
-他是一个严格按照 JMS 这个API 规范开发的一个消息中间件,同时实现了 AMQP 协议,一起其他的一些消息协议
+他是一个严格按照 JMS 这个API 规范开发的一个消息中间件,同时实现了 AMQP 协议, MQTT协议 Openwire协议 Stomp协议等
 
 ## 2.0 queue和topic在ActiveMQ的实现
 

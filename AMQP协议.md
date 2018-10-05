@@ -8,7 +8,7 @@ AMQP协议的全称是：Advanced Message Queuing Protocol（高级消息队列�
 
 ## 1、协议概览 
 
-在网络上讲解AQMP协议的文章已经有很多了，您可以在百度、Google、必应上搜索关键字‘AMQP’，就会出现很多相关文章。虽然文章数量比较多，但是却鲜有质量过硬的文章（当然除了AMQP官网 http://www.amqp.org/ 的协议说明文档）。本小节的内容我试图在能力所及的范围内，为各位读者将AMQP协议的核心要点讲清楚。为了达到这个目的，首先将AMQP协议的原理用下图进行一个全面呈现，然后在详细讲解图中的每一个要点：
+AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试图在能力所及的范围内，为各位读者将AMQP协议的核心要点讲清楚。为了达到这个目的，首先将AMQP协议的原理用下图进行一个全面呈现，然后在详细讲解图中的每一个要点：
 
  ![20170918215545604](E:\文档\study-note\AMQP协议.assets/20170918215545604.png)
 
@@ -16,13 +16,13 @@ AMQP协议的全称是：Advanced Message Queuing Protocol（高级消息队列�
 
 * AMQP协议中的元素包括：Message（消息体）、Producer（消息生产者）、Consumer（消息消费者）、Virtual Host（虚拟节点）、Exchange（交换机）、Queue（队列）等；
 
-* **由Producer（消息生产者）和Consumer（消息消费者）构成了AMQP的客户端**，他们是发送消息和接收消息的主体。**AMQP服务端称为Broker**，一个Broker中一定包含完整的Virtual Host（虚拟主机）、 Exchange（交换机）、Queue（队列）定义； 
+* **由Producer（消息生产者）和Consumer（消息消费者）构成了AMQP的客户端**，他们是发送消息和接收消息的主体。**AMQP服务端称为Broker**，一个Broker中一定包含完 整的Virtual Host（虚拟主机）、 Exchange（交换机）、Queue（队列）定义； 
 
 * 一个Broker可以创建多个Virtual Host（虚拟主机），我们将讨论的Exchange和Queue都是虚拟机中的工作元素（还有User元素）。**注意，如果AMQP是由多个Broker构成的集群提供服务，那么一个Virtual Host也可以由多个Broker共同构成；** 
 
 * Connection是由Producer（消息生产者）和Consumer（消息消费者）创建的连接，连接到Broker物理节点上。但是有了Connection后客户端还不能和服务器通信，在Connection之上客户端会创建Channel，连接到Virtual Host或者Queue上，这样客户端才能向Exchange发送消息或者从Queue接受消息。**一个Connection上允许存在多个Channel，只有Channel中能够发送/接受消息。**
 
-* Exchange元素是AMQP协议中的交换机，**Exchange可以绑定多个Queue也可以同时绑定其他Exchange。消息通过Exchange时，会按照Exchange中设置的Routing（路由）规则（路由规则还会和Message中的Routing Key属性配合使用），将消息发送到符合的Queue或者Exchange中。**
+* **Exchange是AMQP协议中的交换机**，**Exchange可以绑定多个Queue也可以同时绑定其他Exchange。消息通过Exchange时，会按照Exchange中设置的Routing（路由）规则（路由规则还会和Message中的Routing Key属性配合使用），将消息发送到符合的Queue或者Exchange中。**
 
   那么AMQP消息在这个结构中是如何通过Producer发出，又经过Broker最后到达Consumer的呢？请看下图：
 
@@ -41,7 +41,7 @@ AMQP协议的全称是：Advanced Message Queuing Protocol（高级消息队列�
 
 首先要说明的是目前国内多个技术站点，详细介绍AMQP消息格式的文章本来就不多（不包括那些聊聊几笔的转发），而且基本上都没有详细讲解格式本身，只是粗略说明了AMQP消息采用二进制格式（任何应用层协议在网络上进行传输，都是使用二进制流进行的，所以这个说法当然没错）。 
 
-**有的文章还向读者传递了错误的信息。例如说AMQP消息格式包括两部分：消息头和消息正文**。 这**是不完全的表诉**的，虽然AMQP消息格式确实包括Header和Body部分，但是绝对不止这两个部分。（如果真是这样，ISO/IEC组织就不需要使用125页的文档篇幅来进行说明了）	
+**有的文章还向读者传递了错误的信息。例如说AMQP消息格式包括两部分：消息头和消息正文**。 这**是不完全的表诉**，虽然AMQP消息格式确实包括Header和Body部分，但是绝对不止这两个部分。（如果真是这样，ISO/IEC组织就不需要使用125页的文档篇幅来进行说明了）	
 
 首先我们需要说明的是，**作为一种网络通讯协议，AMQP工作在七层/五层网络模型的应用层，是一个典型的应用层协议；**另外，由于AMQP协议存在多种元素定义，且这些元素定义工作在不同的领域。例如Channel的定义是为了基于网络连接记录会话状态；Queue等元素帮助AMQP完成路由规则，这些元素在Message消息记录中都需要有所体现。 所以AMQP协议首先要记录网络状态和会话状态，格式如下（AMQP帧的定义在《OASIS Advanced Message Queueing Protocol (AMQP) Version 1.0》文档的第38页）：
 
