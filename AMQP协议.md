@@ -47,7 +47,8 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
 ![20170918222045857](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/20170918222045857.png)
 
-其中非PAYLOAD部分，在网络协议的应用层说明Channel的工作状态（当然还有说明整个AMQP消息的长度区域：SIZE），我**们真正需要的内容存在PAYLOAD区域。**PAYLOAD区域（译文称为‘交付区’）的格式如下（可以在《OASIS Advanced Message Queueing Protocol (AMQP) Version 1.0》文档的第3部分：messaging第82页找到详细说明）：![1537616537289](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets\1537616537289.png)
+其中非PAYLOAD部分，在网络协议的应用层说明Channel的工作状态（当然还有说明整个AMQP消息的长度区域：SIZE），我**们真正需要的内容存在PAYLOAD区域。**PAYLOAD区域（译文称为‘交付区’）的格式如下（可以在《OASIS Advanced Message Queueing Protocol (AMQP) Version 1.0》文档的第3部分：messaging第82页找到详细说明）：
+![1537616537289](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets\1537616537289.png)
 
 在PAYLAOD区域一共包含7个数据区域：header、delivery-annotations（传递注释）、message-annotations（消息注释）、properties（属性）、application-properties（应用属性）、application-data（应用数据）、footer。这些元素的作用如下：
 
