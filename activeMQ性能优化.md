@@ -130,7 +130,7 @@ public class JMSProducer {
 // 表示这个端口使用NIO模型支持Stomp协议
 
 <transportConnector name="amqp+ssl" uri="amqp+ssl://localhost:5671"/>
-// 表示这个端口支持amqp和ssl密文传输12345
+// 表示这个端口支持amqp和ssl密文传输
 ```
 
 所以如果我们既需要某一个端口支持NIO网络IO模型，又需要它支持多个协议，那么可以进行如下的配置：
@@ -142,7 +142,7 @@ public class JMSProducer {
 另外，**如果是为了生产环境进行的配置，那么您至少应该还要配置这个端口支持的最大连接数量 设置每一条消息的最大传输值 设置NIO使用的线程池最大工作线程数量**（当然您已经知道了这些设置的文档所在位置，所以您可以根据自己的情况进行设置属性的增减）：
 
 ```xml
-<transportConnector name="auto+nio" uri="auto+nio://0.0.0.0:61608?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600&amp;org.apache.activemq.transport.nio.SelectorManager.corePoolSize=20&amp;org.apache.activemq.transport.nio.SelectorManager.maximumPoolSize=50" />
+<transportConnector name="auto+nio" uri="auto+nio://0.0.0.0:61608?maximumConnections=1000&wireFormat.maxFrameSize=104857600&org.apache.activemq.transport.nio.SelectorManager.corePoolSize=20&org.apache.activemq.transport.nio.SelectorManager.maximumPoolSize=50" />
 ```
 
 以下附图是改变网络连接设置后，ActiveMQ管理控制台中Connections页面显示的内容。注意ws协议的端口是额外保留的配置——因为auto模式中的协议不支持ws：![20170920083125626](E:\文档\study-note\activeMQ性能优化.assets/20170920083125626.png)
@@ -151,9 +151,9 @@ public class JMSProducer {
 
 ## **多节点方案**
 
-**集群方案主要为了解决系统架构中的两个关键问题：高可用和高可靠性。ActiveMQ服务的高可用性是指，在ActiveMQ服务性能不变 数据不丢失的前提下，确保当系统灾难出现时ActiveMQ能够持续提供消息服务，高可靠性方案最终目的是减少整个ActiveMQ停止服务的时间。**
+**集群方案主要为了解决系统架构中的两个关键问题：高可用和高可靠性。ActiveMQ服务的高可靠性是指，在ActiveMQ服务性能不变 数据不丢失的前提下，确保当系统灾难出现时ActiveMQ能够持续提供消息服务，高可靠性方案最终目的是减少整个ActiveMQ停止服务的时间。**
 
-ActiveMQ服务的高性能是指，在保证ActiveMQ服务持续稳定性 数据不丢失的前提下，确保ActiveMQ集群能够在单位时间内吞吐更高数量的消息 确保ActiveMQ集群处理单条消息的时间更短 确保ActiveMQ集群能够容纳更多的客户端稳定连接。
+**ActiveMQ服务的高性能是指，在保证ActiveMQ服务持续稳定性 数据不丢失的前提下，确保ActiveMQ集群能够在单位时间内吞吐更高数量的消息 确保ActiveMQ集群处理单条消息的时间更短 确保ActiveMQ集群能够容纳更多的客户端稳定连接。**
 
 下面我们分别介绍如何通过多个ActiveMQ服务节点集群方式，分别提供热备方案和高性能方案。最后我们讨论如何将两种方案结合在一起，最终形成在生成环境下使用的推荐方案。
 
@@ -265,7 +265,7 @@ public class AcceptMulticast {
 
 这样的服务策略主要包括两种：主/从模式和负载均衡模式。对于第一种策略我们会在后文进行讨论。**本节我们要重点讨论的是基于Network Bridges的负载均衡模式。**
 
-**需要注意的是**：**桥接之后，如果从从节点A 消费 节点B的消息，相当于吧B 的消息都传了一份给A,同时B上面的这些消息会被标记为已消费，也就是说，通过b节点再次消费是无法消费被传给A的那部分消息的**
+**需要注意的是**：**桥接之后，如果从节点A 消费 节点B的消息，相当于把B 的消息都传了一份给A,同时B上面的这些消息会被标记为已消费，也就是说，通过b节点再次消费是无法消费被传给A的那部分消息的**
 
 ## 2.3 动态Network Connectors
 
