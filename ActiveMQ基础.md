@@ -169,7 +169,7 @@ ActiveMQ支持可插拔式消息存储,以利用不同的消息存储介质
 - memory 内存 （**非持久化介质**）
 - LevelDB (弃用了，已不再维护更新)
 
-现在暂时只介绍第一种KAhaDB，别的需要的时候查资料
+现在暂时只介绍第一种KahaDB，别的需要的时候查资料
 
 #### 2.2.5.2 通常情况下
 
@@ -190,7 +190,7 @@ activemq  libwrapper.so  wrapper  wrapper.conf
 ......
 
 # Initial Java Heap Size (in MB)
-#wrapper.java.initmemory=3
+wrapper.java.initmemory=100
 
 # Maximum Java Heap Size (in MB)
 wrapper.java.maxmemory=1024
@@ -198,7 +198,7 @@ wrapper.java.maxmemory=1024
 .....
 ```
 
-以上配置项设置JVM的初始内存大小为100MB，设置JVM的最大内存大小为512MB。如果您在更改后使用console参数启动ActiveMQ，那么会看到当前ActiveMQ的JVM设置发生了变化
+以上配置项设置JVM的初始内存大小为100MB，设置JVM的最大内存大小为1024MB。如果您在更改后使用console参数启动ActiveMQ，那么会看到当前ActiveMQ的JVM设置发生了变化
 
 在conf/activemq.xml 配置文件中配置`<broker>`标签的子标签
 
@@ -213,7 +213,7 @@ wrapper.java.maxmemory=1024
         <storeUsage>
             <storeUsage limit="100 gb"/>
         </storeUsage>
-        <!-- 当消息达到 memoryUsage内存限制的时候 对于非持久化消息来说，
+        <!-- 对于非持久化消息来说,当消息达到 memoryUsage内存限制的时候，
          会将消息持久化到磁盘上临时存储-->
         <tempUsage>
             <tempUsage limit="50 gb"/>
@@ -223,7 +223,7 @@ wrapper.java.maxmemory=1024
 ```
 #### 2.2.5.4 KahaDB 存储方式
 
-　KahaDB 是从 ActiveMQ **5.4 开始默认的持久化插件**。KahaDb 恢复时间远远小于其前身 AMQ 并且使用更少的数据文件，所以可以完全代替 AMQ，kahaDB 的持久化机制同样是基于日志文件，索引和缓存。 
+KahaDB 是从 ActiveMQ **5.4 开始默认的持久化插件**。KahaDb 恢复时间远远小于其前身 AMQ 并且使用更少的数据文件，所以可以完全代替 AMQ，kahaDB 的持久化机制同样是基于日志文件，索引和缓存。 
 
 ##### **2.2.5.4.1 KahaDB 主要特性**
 
@@ -257,7 +257,7 @@ wrapper.java.maxmemory=1024
 
   **这个消息数据的写入使用的顺序写，也就是在磁盘上的顺序写入，相对来说性能就比较高**
 
-- **Cache**：从上图可以看出，我们的消息，消息索引一开始都是才这个Cache（内存）中。
+- **Cache**：从上图可以看出，我们的消息，消息索引一开始都是在 这个Cache（内存）中。
 
   消息：当有活动消费者时，用于临时存储，消息会被发送给消费者，如果消息及时被确认，这不需写入到磁盘
 
@@ -316,11 +316,11 @@ wrapper.java.maxmemory=1024
 
 ##### 2.2.6.1 同步发送和异步发送
 
-* 同步（sync）：发送者发送一条消息会阻塞，知道 activeMQ 服务的 broker 反馈一个确认消息给发送者，表示消息已经被broker处理。
+* 同步（sync）：发送者发送一条消息会阻塞，直到 activeMQ 服务的 broker 反馈一个确认消息给发送者，表示消息已经被broker处理。
   * 优点：提供了消息的安全性保障
   * 缺点：由于是阻塞的方式所以会影响发送端的发送性能
   * 建议：绝对不允许消息丢失的时候使用
-  * **注意**：**同步发送在实现上使用的还是异步，不够他使用了阻塞来获取结果，实现的同步**
+  * **注意**：**同步发送在实现上使用的还是异步，不过他使用了阻塞来获取服务的响应结果，实现了同步**
 
 * 异步(async)：和同步发送正好相反，发送者不需要阻塞等待broker的反馈
   * 优点：性能相对较高
@@ -360,14 +360,10 @@ ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
 ```java
 String brokerUrl = "tcp://localhost:61616?" + 
                    "jms.producerWindowSize=1048576" ;
-ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl)
 ```
 
-
-
 ### 2.2.7 消息的默认发送策略
-
-* **默认情况下生产端发送的是持久化消息**
 
 * **持久化消息在非事务模式下是同步发送的**
 * **非持久化消息都是异步发送的**
@@ -378,9 +374,9 @@ ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
 在消费端调用方法：
 
 * `consumer.receive()` ：阻塞式（同步）的获取消息
-* `consumer.setMessageListener(messageListener);`：注册监听（异步）的方式获取消息
+* `consumer.setMessageListener(messageListener)`：注册监听（异步）的方式获取消息
 
-注意：同一个session （会话）只能使用一个方式，他们是互斥的。
+注意：同一个session （会话）只能使用一个方式，它们是互斥的。
 
 ## 2.3 生产者策略
 
@@ -388,7 +384,7 @@ ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
 
 我们知道**发送NON_PERSISTENT Message时，消息发送方默认使用异步方式**：即是说消息发送后发送方不会等待NON_PERSISTENT Message在服务端的任何回执。**那么问题来了**：如果这时服务端已经出现了消息堆积，并且堆积程度已经达到“无法再接收新消息”的极限情况了，那么消息发送方如何知晓并采取相应的策略呢？
 
-实际上所谓的异步发送也并非绝对的异步，消息发送者会在发送一定大小的消息后等待服务端进行回执（这个配置只是针对使用异步方式进行发送消息的情况）：
+实际上所谓的异步发送也并非绝对的异步，消息发送者会在发送一定大小的消息后等待服务端进行回执（**这个配置只是针对使用异步方式进行发送消息的情况**）：
 
 ```java
 // 1. 
@@ -404,13 +400,13 @@ ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://192.1
 Destination destination = session.createTopic("test-queue?producer.windowSize=1048576");
 ```
 
-如果您使用的是异步发送方式，那么必须通过这个以上代码指明回执点。
+如果您使用的是异步发送方式，那么必须通过以上代码指明回执点。
 
 ### 2.3.2 发送PERSISTENT Message
 
 如果您不特意指定消息的发送类型，那么消息生产者默认发送PERSISTENT Meaage。这样的消息发送到ActiveMQ服务端后将被进行持久化存储（持久化存储方案将在后文进行详细介绍），并且消息发送者默认等待ActiveMQ服务端对这条消息处理情况的回执。
 
-**以上这个过程非常耗时**，ActiveMQ服务端不但要接受消息，在内存中完成存储，**并且按照ActiveMQ服务端设置的持久化存储方案对消息进行存储**（**主要的处理时间耗费在这里**）。为了提高ActiveMQ在接受PERSISTENT Meaage时的性能，ActiveMQ允许开发人员遵从JMS API中的设置方式，为消息发送端在发送PERSISTENT Meaage时提供异步方式：
+**以上这个过程非常耗时**，ActiveMQ服务端不但要接受消息，在内存中完成存储，**并且按照ActiveMQ服务端设置的持久化存储方案对消息进行存储**（**主要的处理时间耗费在这里**）。为了提高ActiveMQ在接受PERSISTENT Meaage时的性能，ActiveMQ允许开发人员遵从JMS API中的设置方式，为消息发送端在发送PERSISTENT Meaage时提供异步方式 。
 
 一旦您进行了这样的设置，就需要设置回执窗口：
 
@@ -436,7 +432,7 @@ JMS规范中支持带事务的消息，也就是说您可以启动一个事务�
 
 **不进入队列，并不代表JMS不会在事务提交前将消息发送给ActiveMQ服务端**。 实际上这些消息都会发送给服务端，服务端发现这是一条带有Transaction ID的消息，就会将先把这条消息放置在“transaction store”区域中（并且带有redo日志，这样保证在收到rollback指令后能进行取消操作），等待这个Transaction ID被rollback或者commit。
 
-一旦这个Transaction ID被commit，ActiveMQ才会依据自身设置的PERSISTENT Meaage处理规则或者NON_PERSISTENT Meaage处理规则，将Transaction ID对应的message进行入队操作（无论是Queue还是Topic）。以下代码示例了如何在生产者端使用事务发送消息：
+一旦这个Transaction ID被commit，ActiveMQ才会依据自身设置的 PERSISTENT Meaage处理规则或者NON_PERSISTENT Meaage 处理规则，将Transaction ID对应的message进行入队操作（无论是Queue还是Topic）。以下代码示例了如何在生产者端使用事务发送消息：
 
 ```java
 ......
@@ -561,10 +557,7 @@ ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
 
 **注意**：
 
-* **`optimizeAcknowledgeTimeOut`只能在 brokerUrl 中指定**
 * **开启ACK优化,只有当消费者端使用AUTO_ACKNOWLEDGE方式时才会起效**
-
-
 
 #### 2.4.2.2 ActiveMQ默认的一些prefetchSize配置
 
