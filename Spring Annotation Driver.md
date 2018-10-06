@@ -375,9 +375,72 @@ public class AutoWiredDemo {
 
 
 
-## 1.8 JSR 250
+## 1.8 @ImportResource
 
-### 1.8.1 @Resourc
+使用` @ImportResource`注解配合 `@Value`注解，可以实现读取资源文件中的key对应的value值
+
+**特别注意：这里我们代码中使用key，不是 username,因为如果在spring中使用`$(username)`,获取到的将是当前系统的用户名，而不是资源文件中配置的username.**
+
+```java
+@Configuration
+@ImportResource("classpath:spring/import/importResourceDemo.xml")
+public class ImportResourceDemo {
+    @Value("${jdbc.username}")
+    private String username;
+
+    @Value("${jdbc.password}")
+    private String password;
+
+    @Value("${jdbc.url}")
+    private String url;
+
+    @Bean(name = "myDriverManager")
+    @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public MyDriverManager getMyDriverManager() {
+        return new MyDriverManager(username, password, url);
+    }
+}
+```
+
+
+
+```java
+public class MyDriverManager {
+
+    public MyDriverManager(String username, String password, String url) {
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(url);
+    }
+}
+```
+
+importResourceDemo.xml
+
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+<!--<bean id="bean2" class="com.stu.springdemo.annotation.resource.Bean1"/>-->
+<context:property-placeholder location="classpath:spring/import/jdbc.properties"/>
+</beans>
+```
+
+jdbc.properties
+
+```properties
+jdbc.username=root
+jdbc.password=116611 
+jdbc.url=jdbc:mysql://localhost:3306/train?useUnicode=true&amp;characterEncoding=UTF-8
+```
+
+## 1.3 JSR 250
+
+### 1.9.1 @Resourc
 
 和`@Autowired`使用基本方式基本相同,那么他们不同点是:
 
@@ -392,4 +455,20 @@ ByName匹配规则:
 * 作用于方法: 不明确指定注解的name属性的时候,默认按照方法参数名去匹配,明确指定name那么按照.....
 * 作用于构造方法:同上
 
-## 1.8.2 
+### 1.9.2 @PostConstruct 和 @PreDestroy
+
+这个注解是spring Bean 生命周期 中初始化和销毁的注解实现机制。
+
+如果为bean配置了多个生命周期机制，并且每个机制都配置了不同的方法名称，则每个配置的方法都按照下面列出的顺序执行。但是，如果`init()`为多个生命周期机制配置了相同的方法名称（例如， 对于初始化方法），则该方法将执行一次。
+
+为同一个bean配置的多个生命周期机制，具有不同的初始化方法，如下所示：
+
+- 用注释方法注释 `@PostConstruct`
+- `afterPropertiesSet()`由`InitializingBean`回调接口定义
+- 自定义配置的`init()`方法
+
+Destroy方法以相同的顺序调用：
+
+- 用注释方法注释 `@PreDestroy`
+- `destroy()`由`DisposableBean`回调接口定义
+- 自定义配置的`destroy()`方法
