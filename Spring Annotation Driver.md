@@ -100,6 +100,8 @@ public @interface Service {
 
 这个注解需要搭配 `@Configuration`注解使用，当然也可以搭配通用的`@Component`注解使用,效果和XMl中配置的效果类似，但是少了部分功能，这部分功能需要使用 别的注解来补充（这些注解后续会有介绍）
 
+注意：`@Bean`配置的bean 默认单例的，如果需要指定别的请搭配1.5节中的`@Scope`使用
+
 实例：
 
 ```java
@@ -200,6 +202,8 @@ public @interface Scope {
 和xml中的作用域相同，通过`@Scope`注解也能达到相同的效果，
 
 **从源码可以看出这个注解可以用于方法和累上面，相对应的就是配合上文的 1.2节 和 1.3节 中的注解使用了，他们默认情况下都是单例的。**
+
+**该注解同时还可以指定使用什么样的代理方式**
 
 ```java
 @Configuration
@@ -438,7 +442,7 @@ jdbc.password=116611
 jdbc.url=jdbc:mysql://localhost:3306/train?useUnicode=true&amp;characterEncoding=UTF-8
 ```
 
-## 1.3 JSR 250
+## 1.9 JSR 250
 
 ### 1.9.1 @Resourc
 
@@ -472,3 +476,32 @@ Destroy方法以相同的顺序调用：
 - 用注释方法注释 `@PreDestroy`
 - `destroy()`由`DisposableBean`回调接口定义
 - 自定义配置的`destroy()`方法
+
+## 2.0 JSR 330
+
+从spring 3.0 开始支持，使用前需要导入依赖，这里通过maven的方式导入
+
+```xml
+<dependency>
+    <groupId>javax.inject</groupId>
+    <artifactId>javax.inject</artifactId>
+    <version>1</version>
+</dependency>
+```
+
+### 2.1 @Inject
+
+等效与`@AutoWired`，不过由于它没有 required 属性，所以要搭配 `@Nullable`才能实现`@AutoWired(required = false)`这样的效果	
+
+### 2.2 @Named
+
+```xml
+@Qualifier
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Named {
+    String value() default "";
+}
+```
+
+修饰类相当于`@Component`,除此之外和`@Qualifier`用法相似(从源码也能看出来)
