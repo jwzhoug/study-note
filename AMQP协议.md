@@ -93,4 +93,4 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
   设置为Fanout模式的Exchange收到AMQP消息后，将会将这个AMQP消息复制多份，分别发送到和自己绑定的各个Queue中
 
-**注意** : 以上介绍的Direct 路由模式和Topic 路由模式中，如果Exchange交换机没有找到任何匹配Routing Key的Queue，那么这条AMQP消息会被丢弃。（**只有Queue有保存消息的功能，但是Exchange并不负责保存消息**）
+**注意** : 以上介绍的Direct 路由模式和Topic 路由模式中，如果Exchange交换机没有找到任何匹配Routing Key的Queue，那么这条AMQP消息会被丢弃。（**只有Queue有保存消息的功能，但是Exchange并不负责保存消息**） 

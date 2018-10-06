@@ -241,4 +241,7 @@ doc/**/*.pdf
 ### 拉去远程仓库的更新
 `git pull origin master` 命令，拉去之后，可以使用 3.4 的方法做内容比较
 
-## 3.6 回滚
+## 3.6 覆盖本地
+
+git checkout filename
+
