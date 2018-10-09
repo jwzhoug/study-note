@@ -234,6 +234,8 @@ doc/**/*.pdf
 
 `git commit` 加上 `-a` 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 `git add` 步骤 
 
+`git commit -a -m "commitChanged"`
+
 ### 提交到远程仓库
 
 `git push origin master` 命令，如果相同文件在远程仓库有修改，提交将失败
