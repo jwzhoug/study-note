@@ -237,7 +237,7 @@ public class BeanAnnotation {
 }
 ```
 
-### 1.5.1 自定义命名策略
+### 1.5.1 自定义Scope策略
 
 实现ScopeMetaDataResolver接口，并且包含一个无参数的构造方法。然后通过配置文件：
 
