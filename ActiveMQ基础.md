@@ -404,7 +404,7 @@ Destination destination = session.createTopic("test-queue?producer.windowSize=10
 
 ### 2.3.2 发送PERSISTENT Message
 
-如果您不特意指定消息的发送类型，那么消息生产者默认发送PERSISTENT Meaage。这样的消息发送到ActiveMQ服务端后将被进行持久化存储（持久化存储方案将在后文进行详细介绍），并且消息发送者默认等待ActiveMQ服务端对这条消息处理情况的回执。
+如果您不特意指定消息的发送类型，那么消息生产者默认发送PERSISTENT Meaage。这样的消息发送到ActiveMQ服务端后将被进行持久化存储，并且消息发送者默认等待ActiveMQ服务端对这条消息处理情况的回执。
 
 **以上这个过程非常耗时**，ActiveMQ服务端不但要接受消息，在内存中完成存储，**并且按照ActiveMQ服务端设置的持久化存储方案对消息进行存储**（**主要的处理时间耗费在这里**）。为了提高ActiveMQ在接受PERSISTENT Meaage时的性能，ActiveMQ允许开发人员遵从JMS API中的设置方式，为消息发送端在发送PERSISTENT Meaage时提供异步方式 。
 
@@ -675,7 +675,7 @@ public void onMessage(Message message) {
     System.out.println("Message = " + message);
     // rollback这条消息
     this.session.rollback();
-}1234567
+}
 ```
 
 以上代码片段中，我们不停的回滚正在处理的这条消息，通过打印出来的信息可以看到，这条消息被不停的重发：

@@ -80,7 +80,7 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
   direct模式下Exchange将使用AMQP消息中所携带的Routing-Key和Queue中的Routing Key进行比较。如果两者完全匹配，就会将这条消息发送到这个Queue中
 
-* **topiic**
+* **topic**
 
   Exchange将支持使用‘#’和‘ * ’通配符进行Routing Key的匹配查找（**‘#’表示0个或若干个关键词，‘ * ’表示一个关键词，注意是关键词不是字母**）
 
