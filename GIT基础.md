@@ -245,5 +245,5 @@ doc/**/*.pdf
 
 ## 3.6 覆盖本地
 
-git checkout filename
+`git checkout filename`
 
