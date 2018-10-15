@@ -1,8 +1,8 @@
 # 目录：
 
-[JVM类加载以及SPI](#JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI)
+[JVM类加载以及SPI](#JVM类加载以及SPI)
 
-[类的生命周期：](#%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9A)
+[类的生命周期：](#类的生命周期：)
 
 [1.加载](#1.%E5%8A%A0%E8%BD%BD)
 
