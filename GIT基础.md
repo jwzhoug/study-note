@@ -247,4 +247,4 @@ doc/**/*.pdf
 
 `git checkout filename`
 
-**后续会继续跟新**
+**后续会继续更新内容**
