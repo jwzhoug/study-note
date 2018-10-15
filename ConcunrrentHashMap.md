@@ -120,11 +120,11 @@ private static final int RESIZE_STAMP_SHIFT = 32 - RESIZE_STAMP_BITS;
 ```
 ### 重要成员变量
 
-* `transient volatile Node<K,V>[] table `都和hashMap 盛装Node元素的数组，默认为null，初始化发生在第一次插入操作，默认大小为16的数组，它的大小是2的整数次幂 扩容时大小总是2的幂次方 这些地方都和hashMap 是一样的
+* `transient volatile Node<K,V>[] table ` : 和hashMap 盛装Node元素的数组一样，默认为null，初始化发生在第一次插入操作，默认大小为16的数组，它的大小是2的整数次幂 扩容时大小总是2的幂次方 这些地方都和hashMap 是一样的
 
-* `private transient volatile Node<K,V>[] nextTable;`默认为null，扩容时新生成的数组，其大小为原数组的两倍。 他的作用是可以在并发时根据判断让别的线程辅助正在扩容的线程进行扩容
+* `private transient volatile Node<K,V>[] nextTable`：默认为null，扩容时新生成的数组，其大小为原数组的两倍。 他的作用是可以在并发时根据判断，让别的线程辅助正在扩容的线程进行扩容
 
-* `private transient volatile int sizeCt`  是一个控制标识符，在不同的地方有不同用途，而且它的取值不同，也代表不同的含义。;
+* `private transient volatile int sizeCt` ：是一个控制标识符，在不同的地方有不同用途，而且它的取值不同，也代表不同的含义。;
   * 负数代表正在进行初始化或扩容操作
   * -1代表正在初始化
   * -N 表示有N-1个线程正在进行扩容操作
@@ -160,7 +160,7 @@ private static final int RESIZE_STAMP_SHIFT = 32 - RESIZE_STAMP_BITS;
 
 ### 重要成员类
 
-* **Node**：保存key，value及key的hash值的数据结构。 和hashMap 基本差不多，但是不同之处在于下面变量，其中value和next都用volatile修饰，保证并发的可见性。这是为了提供并发时候的可见性。它不允许调用setValue方法直接改变Node的value域，它增加了find方法辅助map.get()方法。 
+* **Node**：保存key，value及key的hash值的数据结构。 和hashMap 基本差不多，但是不同之处在于下面变量，其中value和next都用volatile修饰，保证并发的可见性。这是为了提供并发时候的可见性。它不允许调用setValue方法直接改变Node的value域，增加了find方法辅助map.get()方法。 
 
   ```java
   static class Node<K,V> implements Map.Entry<K,V> {
@@ -280,7 +280,7 @@ static final class TreeBin<K,V> extends Node<K,V> {
         // values for lockState
         static final int WRITER = 1; // set while holding write lock 持有写锁的一个状态 
         static final int WAITER = 2; // set when waiting for write lock 等待获取写锁的状态
-        static final int READER = 4; // increment value for setting read lock 贡献式读锁的状态增量
+        static final int READER = 4; // increment value for setting read lock 共享式读锁的状态增量
         /**
          * Creates bin with initial set of nodes headed by b.
          */
