@@ -76,8 +76,7 @@
 
 **保证类任意类加载环境的唯一性**，比如java.lang.String 类 你可以再定义一个lava.lang.String 这样的类，但是加载的时候不会被加载，并且会抛出异常。
 
-需要注意的时候 除了 Bootstrap ClassLoader 之外别的类加载器都应该有自己的父类加载器，这些类加载器的**父子关系不是以继承关系实现的，都是使用组合关系实现。**
-![img](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606420061.png)
+需要注意的时候 除了 Bootstrap ClassLoader 之外别的类加载器都应该有自己的父类加载器，这些类加载器的**父子关系不是以继承关系实现的，都是使用组合关系实现。**![img](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606420061.png)
 
 从上图su.msic.Launcher类中也可已看出他们两并不是继承的关系而是组合的关系
 
