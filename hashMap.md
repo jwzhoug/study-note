@@ -197,29 +197,8 @@ transient int modCount;// 记录hash表被修改的次数（比如一次put ）
  */
 final float loadFactor;// 负载因子
 
-/* ---------------- Public operations -------------- */
 
-/**
- * Constructs an empty <tt>HashMap</tt> with the specified initial
- * capacity and load factor.
- *
- * @param  initialCapacity the initial capacity
- * @param  loadFactor      the load factor
- * @throws IllegalArgumentException if the initial capacity is negative
- *         or the load factor is nonpositive
- */
-public HashMap(int initialCapacity, float loadFactor) {
-    if (initialCapacity < 0)
-        throw new IllegalArgumentException("Illegal initial capacity: " +
-                                           initialCapacity);
-    if (initialCapacity > MAXIMUM_CAPACITY)
-        initialCapacity = MAXIMUM_CAPACITY;
-    if (loadFactor <= 0 || Float.isNaN(loadFactor))
-        throw new IllegalArgumentException("Illegal load factor: " +
-                                           loadFactor);
-    this.loadFactor = loadFactor;
-    this.threshold = tableSizeFor(initialCapacity);
-}
+
 ```
 
 
@@ -273,17 +252,6 @@ final Node<K,V> getNode(int hash, Object key) {
     return null;
 }
 
-/**
- * Returns <tt>true</tt> if this map contains a mapping for the
- * specified key.
- *
- * @param   key   The key whose presence in this map is to be tested
- * @return <tt>true</tt> if this map contains a mapping for the specified
- * key.
- */
-public boolean containsKey(Object key) {
-    return getNode(hash(key), key) != null;
-}
 
 /**
  * Associates the specified value with the specified key in this map.
@@ -469,108 +437,6 @@ final void treeifyBin(Node<K,V>[] tab, int hash) {
     }
 }
 
-
-/**
- * Removes the mapping for the specified key from this map if present.
- *
- * @param  key key whose mapping is to be removed from the map
- * @return the previous value associated with <tt>key</tt>, or
- *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
- *         (A <tt>null</tt> return can also indicate that the map
- *         previously associated <tt>null</tt> with <tt>key</tt>.)
- */
-public V remove(Object key) {
-    Node<K,V> e;
-    return (e = removeNode(hash(key), key, null, false, true)) == null ?
-        null : e.value;
-}
-
-/**
- * Implements Map.remove and related methods
- *
- * @param hash hash for key
- * @param key the key
- * @param value the value to match if matchValue, else ignored
- * @param matchValue if true only remove if value is equal
- * @param movable if false do not move other nodes while removing
- * @return the node, or null if none
- */
-final Node<K,V> removeNode(int hash, Object key, Object value,
-                           boolean matchValue, boolean movable) {
-    Node<K,V>[] tab; Node<K,V> p; int n, index;
-    if ((tab = table) != null && (n = tab.length) > 0 &&
-        (p = tab[index = (n - 1) & hash]) != null) {
-        Node<K,V> node = null, e; K k; V v;
-        if (p.hash == hash &&
-            ((k = p.key) == key || (key != null && key.equals(k))))
-            node = p;
-        else if ((e = p.next) != null) {
-            if (p instanceof TreeNode)
-                node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
-            else {
-                do {
-                    if (e.hash == hash &&
-                        ((k = e.key) == key ||
-                         (key != null && key.equals(k)))) {
-                        node = e;
-                        break;
-                    }
-                    p = e;
-                } while ((e = e.next) != null);
-            }
-        }
-        if (node != null && (!matchValue || (v = node.value) == value ||
-                             (value != null && value.equals(v)))) {
-            if (node instanceof TreeNode)
-                ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);
-            else if (node == p)
-                tab[index] = node.next;
-            else
-                p.next = node.next;
-            ++modCount;
-            --size;
-            afterNodeRemoval(node);
-            return node;
-        }
-    }
-    return null;
-}
-
-/**
- * Removes all of the mappings from this map.
- * The map will be empty after this call returns.
- */
-public void clear() {
-    Node<K,V>[] tab;
-    modCount++;
-    if ((tab = table) != null && size > 0) {
-        size = 0;
-        for (int i = 0; i < tab.length; ++i)
-            tab[i] = null;
-    }
-}
-
-/**
- * Returns <tt>true</tt> if this map maps one or more keys to the
- * specified value.
- *
- * @param value value whose presence in this map is to be tested
- * @return <tt>true</tt> if this map maps one or more keys to the
- *         specified value
- */
-public boolean containsValue(Object value) {
-    Node<K,V>[] tab; V v;
-    if ((tab = table) != null && size > 0) {
-        for (int i = 0; i < tab.length; ++i) {
-            for (Node<K,V> e = tab[i]; e != null; e = e.next) {
-                if ((v = e.value) == value ||
-                    (value != null && value.equals(v)))
-                    return true;
-            }
-        }
-    }
-    return false;
-}
 ```
 
 
