@@ -77,7 +77,8 @@
 **保证类任意类加载环境的唯一性**，比如java.lang.String 类 你可以再定义一个lava.lang.String 这样的类，但是加载的时候不会被加载，并且会抛出异常。
 
 需要注意的时候 除了 Bootstrap ClassLoader 之外别的类加载器都应该有自己的父类加载器，这些类加载器的**父子关系不是以继承关系实现的，都是使用组合关系实现。**
-·![img](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606420061.png)
+
+![img](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606420061.png)
 
 从上图su.msic.Launcher类中也可已看出他们两并不是继承的关系而是组合的关系
 
@@ -283,9 +284,11 @@ SPI 是JDK 内置的服务发现机制，出现于双亲委派模式第二次被
 典型的例子是，JDBC,我想这个是每一个java 程序开发者都接触过的东西，JDK 中定义了相关的Driver的Interface,相关的厂商来做对应的实现，比如Mysql 实现了自己的驱动，Oracel 也实现了自己的驱动，使用的时候 只需要我们加载对应的驱动就可以了。/
 
 为了证明我所说的，我准备了pgsql 驱动包的截图 :                              
+
 ![img](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606674692.png)
 
 以及java.sql.Driver接口的路径截图
+
 ![1539606698463](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606698463.png)
 
 很明显了吧，Driver类是在rt.jar 中定义的service 接口，不同的数据库厂商，会有他们对应的实现，而这些实现的感知就是通过jdk 定义的SPI 机制，这是一种定义规范。
@@ -297,6 +300,7 @@ SPI 是JDK 内置的服务发现机制，出现于双亲委派模式第二次被
 META-INF/service/；META-INF/dubbo/; META-INF/dubbo/internal/
 
 ​         这些扩展类的加载交给了 dubbo 中定义的 ExtensionLoader类来负责加载
+
 ![1539606713615](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606713615.png)        
 
 友情提示：Alibaba 的dubbo  现在交给apache 维护了
@@ -323,6 +327,7 @@ private static final int n = 100;
 常量值（final 修饰的值） 编译之后会存在class 文件的**静态常良池**中。此时生成了一个constantValue。
 
 在准备阶段会根据这个值给n赋值       
+
 ![img](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606791912.png)
 
 * 注意 ： 实例变量 在对象实例化的时候分配
@@ -354,6 +359,7 @@ public class test {
 ```
 
 2.  反编译以后：  
+
 ![1539606823200](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539606823200.png)
 
 -  直接引用：指针或则内存偏移量地址。引用的对象一定在内存中已经加载
@@ -439,6 +445,7 @@ public static void main(String[] args) {
 ```
 
 ​	输出结果：                                                             
+
 ![1539607023918](https://github.com/Alan-Jun/study-note/blob/master/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8ASPI.assets/1539607023918.png)
 
 ​	什么都没有 说明没有　init 操作
