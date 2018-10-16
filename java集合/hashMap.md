@@ -9,13 +9,23 @@ hashMap 中使用的就是连地址法，这也就确定了他的结构是 数�
 #### hashMap特点
 
 * 默认初始容量 16
+
 * 负载因子 0.75
+
 * 扩容倍数 2
+
 * 底层存储结构： 数组+链表+红黑树
-* hash算法：`(key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);`由于大多数时候起作用的都是低16位，用低16bit和高16bit做了一个异或 （充分利用高16位的值，如果不这样做高16位据大多数时候都不参与hash），可以降低hash碰撞概率。
+
+* hash算法：`(key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);`由于大多数时候起作用的都是低16位，用低16bit和高16bit做了一个异或 （充分利用高16位的值，如果不这样做高16位据大多数时候都不参与hash），可以降低hash碰撞概率。并且在实质上对高16位并没有影响。
+
+  
+
 * index定位法：hash(key) & n-1 ,  n 是容器的数组长度，这个算法依赖于 n = 2[^k]
+
 * 树化条件：链长达到8，同时表的数组长度>=64 ，如果不>=64,会调用resize()方法（扩容两倍，重新散列）
+
 * 重新散列之后元素出现的位置：只可能在原表中的位置或原表位置+原表的数组长度
+
 * 重新散列过程中提高性能的设计：还是利用了位运算实现，如果hash(key) & oldCap ==0，说明它的位置不变，就不需要移动到新表的 oldIndex+oldCap这个位置
 
 ```java
@@ -131,6 +141,8 @@ static class Node<K,V> implements Map.Entry<K,V> {
  * cheapest possible way to reduce systematic lossage, as well as
  * to incorporate impact of the highest bits that would otherwise
  * never be used in index calculations because of table bounds.
+ 
+ 计算key.hashCode()并将(XOR)高的哈希位扩展到较低的位置。因为该表使用了两个掩码，所以只要当前掩码之上的位改变的一组散列总是会发生冲突。(已知的例子是在小表格中持有连续整个数字的Float键的集合。) 因此，我们应用一个变换，将高比特的影响向下传播。在速度、效用和比特传播的质量之间有一个折衷。因为许多常用的散列已经被合理地分配(所以不能从传播中受益)，而且由于我们使用被用于在二进制文件中处理大型碰撞，我们只是以最便宜的方式XOR来减少系统的损耗，同时也不会给最高位带来影响，因为在索引计算中，表的边界不会被使用
  */
 static final int hash(Object key) {
     int h;
