@@ -1,3 +1,7 @@
+---
+typora-root-url: ..\study-note.assets
+---
+
 # 	优化的基础思想
 
 系统的性能层次包括：
