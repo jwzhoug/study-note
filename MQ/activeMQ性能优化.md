@@ -365,7 +365,7 @@ default.ActiveMQ-4.ailve%localhost%auto+nio://activemq:61616
 ......
 ```
 
-### 2.3.3：其他注意事项
+### 2.3.3 其他注意事项
 
 - 关于防火墙：请记得关闭您Linux服务器上对需要公布的IP和端口的限制；
 - 关于hosts路由信息：由于基于组播的动态发现机制，能够找到的是目标ActiveMQ服务节点的机器名，而不是直接找到的IP。所以请设置当前服务节点的hosts文件，以便当前ActiveMQ节点能够通过hosts文件中的IP路由关系，得到机器名与IP的映射：
@@ -599,7 +599,7 @@ jvm 1    |  INFO | Apache ActiveMQ 5.13.1 (activemq2, ID:vm2-46561-1461220298816
 
 从ActiveMQ V5.9.0+ 版本开始，ActiveMQ为使用者提供了一种新的Master/Salve热备方案。这个方案中，我们可以让每个节点都有自己独立的LevelDB数据库（不是像1小节那样共享LevelDB的工作目录），并且使用Zookeeper集群控制多个ActiveMQ节点的工作状态，完成Master/Salve状态的切换。工作模式如下图所示（摘自官网）：
 
-![1537507348644](E:\文档\study-nothttps://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537507348644.png)
+![1537507348644](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537507348644.png)
 
 在这种新的工作模式下，Master节点和各个Salve节点通过Zookeeper进行工作状态同步，即使某个Salve节点新加入也没有问题。下面我们一起来看看如何使用LevelDB + Zookeeper的热备方案。下表中是我们将要使用的IP位置和相关位置的工作任务：
 
