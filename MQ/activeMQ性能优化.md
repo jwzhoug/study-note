@@ -1,4 +1,4 @@
-# 优化的基础思想
+# 	优化的基础思想
 
 系统的性能层次包括：
 
@@ -290,7 +290,7 @@ public class AcceptMulticast {
 ......
 ```
 
-### **3.1 networkConnector标签**
+### 2.3.1 networkConnector标签
 
 如果使用ActiveMQ的组播发现功能，请在networkConnector标签的uri属性中添加如下格式的信息：
 
@@ -314,7 +314,7 @@ multicast://239.0.0.5
 
 以下是通过抓包软件获得的的组播UDP报文：
 
-![1537350695730](E:\文档\study-note\activeMQ性能优化.assets\1537350695730.png)
+![1537350695730](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537350695730.png)
 
 从上图中我们可以获得几个关键信息：
 
@@ -332,7 +332,7 @@ multicast://239.0.0.5:19999
 default.ActiveMQ-4.ailve%localhost%auto+nio://activemq:61616
 ```
 
-### 3.2 transportConnector标签的关联设置
+### 2.3.2 transportConnector标签的关联设置
 
 任何一个ActiveMQ服务节点A，要连接到另外的ActiveMQ服务节点，都需要使用当前节点A已经公布的transportConnector连接端口，例如以下配置中，能够供其它服务节点进行连接的就只有三个transportConnector连接中的任意一个：
 
@@ -365,7 +365,7 @@ default.ActiveMQ-4.ailve%localhost%auto+nio://activemq:61616
 ......
 ```
 
-### 3.3：其他注意事项
+### 2.3.3：其他注意事项
 
 - 关于防火墙：请记得关闭您Linux服务器上对需要公布的IP和端口的限制；
 - 关于hosts路由信息：由于基于组播的动态发现机制，能够找到的是目标ActiveMQ服务节点的机器名，而不是直接找到的IP。所以请设置当前服务节点的hosts文件，以便当前ActiveMQ节点能够通过hosts文件中的IP路由关系，得到机器名与IP的映射：
