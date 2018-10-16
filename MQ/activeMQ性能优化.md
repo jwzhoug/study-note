@@ -145,7 +145,7 @@ public class JMSProducer {
 <transportConnector name="auto+nio" uri="auto+nio://0.0.0.0:61608?maximumConnections=1000&wireFormat.maxFrameSize=104857600&org.apache.activemq.transport.nio.SelectorManager.corePoolSize=20&org.apache.activemq.transport.nio.SelectorManager.maximumPoolSize=50" />
 ```
 
-以下附图是改变网络连接设置后，ActiveMQ管理控制台中Connections页面显示的内容。注意ws协议的端口是额外保留的配置——因为auto模式中的协议不支持ws：![20170920083125626](E:\文档\study-note\activeMQ性能优化.assets/20170920083125626.png)
+以下附图是改变网络连接设置后，ActiveMQ管理控制台中Connections页面显示的内容。注意ws协议的端口是额外保留的配置——因为auto模式中的协议不支持ws：![20170920083125626](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/20170920083125626.png)
 
 # 2. ActiveMQ集群方案(上)
 
@@ -167,7 +167,7 @@ ActiveMQ的多节点集群方案，主要有**动态集群和静态集群两种�
 
 **组播（multicast）基于UDP协议**，它是指在一个可连通的网络中，某一个数据报发送源 向 一组数据报接收目标进行操作的过程。在这个过程中，数据报发送者只需要向这个组播地址（一个D类IP）发送一个数据报，那么加入这个组播地址的所有接收者都可以收到这个数据报。**组播实现了网络中单点到多点的高效数据传送，能够节约大量网络带宽，降低网络负载。**
 
-![1537350010754](E:\文档\study-note\activeMQ性能优化.assets\1537350010754.png)
+![1537350010754](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537350010754.png)
 
 ### 2.1.1 D类IP
 
@@ -474,7 +474,7 @@ uri="static:(tcp://host1:61616,tcp://host2:61616)?maxReconnectDelay=5000&useExpo
 
 为了回答这个问题，我们先回过头来看看ActiveMQ高性能方案的一些不足。假设如下的场景：ActiveMQ A和AcitveMQ B两个服务节点已建立了Network Bridge；并且Producer1 连接在ActiveMQ A上，按照一定周期发送消息（队列名：Queue/testC）；但是当前并没有任何消费者Consumer连接在任何ActiveMQ服务节点上接收消息。整个场景如下图所示：
 
-![](E:\文档\study-note\activeMQ性能优化.assets\1537506845878.png)
+![](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537506845878.png)
 
 在发送了若干消息后，我们查看两个节点ActiveMQ服务节点的消息情况，发现ActiveMQ A并没有把队列Queue/test  C中的消息同步到ActiveMQ B。原来**AcitveMQ Network Bridge的工作原则是：只在服务节点间传输需要传输的消息**，这样做的原因是为了尽量减少AcitveMQ集群网络中不必要的数据流量。在我们实验的这种情况下并**没有任何消费者在任何ActiveMQ服务节点上监听/订阅队列Queue/testC中的消息，所以消息并不会进行同步。**
 
@@ -490,7 +490,7 @@ uri="static:(tcp://host1:61616,tcp://host2:61616)?maxReconnectDelay=5000&useExpo
 
 ActiveMQ早期的文件存储方案、KahaDB存储方案、LevelDB存储方案都支持这个工作模式。当某个ActiveMQ节点获取了文件系统的操作权限后，首先做的事情就是从文件系统中恢复内存索引结构：KahaDB恢复BTree结构；LevelDB恢复memTable结构。
 
-![这里写图片描述](E:\文档\study-note\activeMQ性能优化.assets\1537506869342.png)
+![这里写图片描述](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537506869342.png)
 
 因为本专题讲解的技术体系都是工作在Linux操作系统上，所以为多个ActiveMQ提供共享文件系统方案的第三方文件系统都必须支持POSIX协议，这样Linux操作系统才能实现远程挂载。
 
@@ -518,7 +518,7 @@ ActiveMQ早期的文件存储方案、KahaDB存储方案、LevelDB存储方案�
 mount 192.168.61.140:/usr/nfs /mnt/mfdir/
 ```
 
-挂载后，可以通过df命令查询挂载在后的结果：![这里写图片描述](E:\文档\study-note\activeMQ性能优化.assets\1537506982316.png)
+挂载后，可以通过df命令查询挂载在后的结果：![这里写图片描述](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537506982316.png)
 
 从上图中可以看到，192.168.61.140上提供的NFS共享目录通过mount命令挂载成为了138和139两个物理机上的本地磁盘路径。
 
@@ -599,7 +599,7 @@ jvm 1    |  INFO | Apache ActiveMQ 5.13.1 (activemq2, ID:vm2-46561-1461220298816
 
 从ActiveMQ V5.9.0+ 版本开始，ActiveMQ为使用者提供了一种新的Master/Salve热备方案。这个方案中，我们可以让每个节点都有自己独立的LevelDB数据库（不是像1小节那样共享LevelDB的工作目录），并且使用Zookeeper集群控制多个ActiveMQ节点的工作状态，完成Master/Salve状态的切换。工作模式如下图所示（摘自官网）：
 
-![1537507348644](E:\文档\study-note\activeMQ性能优化.assets\1537507348644.png)
+![1537507348644](E:\文档\study-nothttps://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537507348644.png)
 
 在这种新的工作模式下，Master节点和各个Salve节点通过Zookeeper进行工作状态同步，即使某个Salve节点新加入也没有问题。下面我们一起来看看如何使用LevelDB + Zookeeper的热备方案。下表中是我们将要使用的IP位置和相关位置的工作任务：
 
@@ -733,4 +733,4 @@ ActiveMQ中主要的高性能、高可用方案到此就为各位读者介绍完
 - 将每组的三个ActiveMQ服务节点做LevelDB + Zookeeper的热备方案（且设置replicas=2）。保证每组只有一个节点在一个时间内为Master状态。这样整个集群中的九个ActiveMQ服务节点就同时会有三个ActiveMQ服务节点处于Master状态；
 - 将整个集群中所有ActiveMQ服务节点的高性能方案设置为“组播发现”，并都采用一个相同的组播地址（可以采用默认的组播地址）。这样三个处于Master状态的ActiveMQ服务节点就会形成一个高性能方案（处于Salve状态的节点不会发出组播消息）。整个设计结构如下图所示：
 
-![1537513228479](E:\文档\study-note\activeMQ性能优化.assets\1537513228479.png)
+![1537513228479](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537513228479.png)
