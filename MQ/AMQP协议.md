@@ -10,7 +10,7 @@ AMQP协议的全称是：Advanced Message Queuing Protocol（高级消息队列�
 
 AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试图在能力所及的范围内，为各位读者将AMQP协议的核心要点讲清楚。为了达到这个目的，首先将AMQP协议的原理用下图进行一个全面呈现，然后在详细讲解图中的每一个要点：
 
- ![](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/20170918215545604.png)
+ ![](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/20170918215545604.png)
 
 从上图我们可以看到AMQP协议的各个组成部分： 
 
@@ -26,7 +26,7 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
   那么AMQP消息在这个结构中是如何通过Producer发出，又经过Broker最后到达Consumer的呢？请看下图：
 
-![20170918220205075](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/20170918220205075.png)
+![20170918220205075](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/20170918220205075.png)
 
 * 在Producer（消息生产者）客户端建立了Channel后，就建立了到Broker上Virtual Host的连接。接下来Producer就可以向这个Virtual Host中的Exchange发送消息了；
 * Exchange（交换机）能够处理消息的前提是：**它至少已经和某个Queue或者另外的Exchange形成了绑定关系，并设置好了到这些Queue和Excahnge的Routing（路由规则）**。**Excahnge中的Routing有三种模式**，我们随后会讲到。在Exchange收到消息后，会根据设置的Routing（路由规则），将消息发送到符合要求的Queue或者Exchange中（**路由规则还会和Message中的Routing Key属性配合使用**）；
@@ -45,10 +45,10 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
 首先我们需要说明的是，**作为一种网络通讯协议，AMQP工作在七层/五层网络模型的应用层，是一个典型的应用层协议；**另外，由于AMQP协议存在多种元素定义，且这些元素定义工作在不同的领域。例如Channel的定义是为了基于网络连接记录会话状态；Queue等元素帮助AMQP完成路由规则，这些元素在Message消息记录中都需要有所体现。 所以AMQP协议首先要记录网络状态和会话状态，格式如下（AMQP帧的定义在《OASIS Advanced Message Queueing Protocol (AMQP) Version 1.0》文档的第38页）：
 
-![20170918222045857](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/20170918222045857.png)
+![20170918222045857](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/20170918222045857.png)
 
 其中非PAYLOAD部分，在网络协议的应用层说明Channel的工作状态（当然还有说明整个AMQP消息的长度区域：SIZE），我**们真正需要的内容存在PAYLOAD区域。**PAYLOAD区域（译文称为‘交付区’）的格式如下（可以在《OASIS Advanced Message Queueing Protocol (AMQP) Version 1.0》文档的第3部分：messaging第82页找到详细说明）：
-![1537616537289](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/1537616537289.png)
+![1537616537289](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537616537289.png)
 
 在PAYLAOD区域一共包含7个数据区域：header、delivery-annotations（传递注释）、message-annotations（消息注释）、properties（属性）、application-properties（应用属性）、application-data（应用数据）、footer。这些元素的作用如下：
 
@@ -62,7 +62,7 @@ AMQP官网 http://www.amqp.org/ 的协议说明文档。本小节的内容我试
 
 * properties（属性）：从整个AMQP消息的properties属性开始，到AMQP消息的application-data部分结束，才是AMQP消息的正文内容（译文称为‘裸消息’）。**Properties属性记录了AMQP消息正文的那些‘不可变’属性**。**在properties部分只能传递规范的、标准的、经过ISO/IEC组织定义的属性。**例如：消息id、分组id、发送者id、内容编码等。以下是AMQP协议文档中对Properties部分属性的描述（只能包含这些信息）：
 
-  ![1537616838034](https://github.com/Alan-Jun/study-note/blob/master/AMQP%E5%8D%8F%E8%AE%AE.assets/1537616838034.png) 
+  ![1537616838034](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537616838034.png) 
 
 * application-properties（应用属性）：在这部分数据中主要记录和应用有关的数据，AMQP的实现产品（例如RabbitMQ）需要用这部分数据决定其处理逻辑。例如：送入哪一个Exchange、消息的Routing值是什么、是否进行持久化等;
 
