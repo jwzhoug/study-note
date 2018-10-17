@@ -18,11 +18,31 @@
 
 # 3 Mysql中的索引
 
+## 什么是索引
+
 **索引是高效获取数据的数据结构，在数据存储系统中索引以文件形势存在。**
+
+## 索引有哪些
+
+- [Binary and Linear Search (of sorted list)](https://www.cs.usfca.edu/~galles/visualization/Search.html)：二元线性搜索
+- [Binary Search Trees](https://www.cs.usfca.edu/~galles/visualization/BST.html)：二分搜索树
+- [AVL Trees (Balanced binary search trees)](https://www.cs.usfca.edu/~galles/visualization/AVLtree.html)：平衡二叉搜索树
+- [Red-Black Trees](https://www.cs.usfca.edu/~galles/visualization/RedBlack.html)：红黑树
+- [Splay Trees](https://www.cs.usfca.edu/~galles/visualization/SplayTree.html)：8角树
+- [Open Hash Tables (Closed Addressing)](https://www.cs.usfca.edu/~galles/visualization/OpenHash.html)
+- [Closed Hash Tables (Open Addressing)](https://www.cs.usfca.edu/~galles/visualization/ClosedHash.html) :开方式寻址hash
+- [Closed Hash Tables, using buckets](https://www.cs.usfca.edu/~galles/visualization/ClosedHashBucket.html):使用桶的封闭哈希表
+- [Trie (Prefix Tree, 26-ary Tree)](https://www.cs.usfca.edu/~galles/visualization/Trie.html): 前缀树
+- [Radix Tree (Compact Trie)](https://www.cs.usfca.edu/~galles/visualization/RadixTree.html)：基树
+- [Ternary Search Tree (Trie with BST of children)](https://www.cs.usfca.edu/~galles/visualization/TST.html)：三叉树
+- [B Trees](https://www.cs.usfca.edu/~galles/visualization/BTree.html)：
+- [B+ Trees：](https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html)
+
+## Mysql中用到的索引
 
 这里是一部分，后续更新之后有没有新的我不知道
 
-* hash :  不建议使用，原因：
+* hash :  不建议使用，也最好不要用。原因：
   * 因为hash容易产生hash冲突
   * **无法做范围查询，只能做等值查询的索引，不符合实际运用情况**, 比如：select * from table where id > 1
 
