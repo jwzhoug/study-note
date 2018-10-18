@@ -27,7 +27,7 @@
 `MessageConsumer` 接收消费消息
 
 整个结构如下图所示
-![1536400535278](E:\文档\study-ote\MQ.assets\1536400535278.png)
+![1536400535278](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1536400535278.png)
 
 ### 1.4 持久化消息和非持久化消息
 
@@ -249,7 +249,7 @@ KahaDB 是从 ActiveMQ **5.4 开始默认的持久化插件**。KahaDb 恢复时
 
 ##### 2.2.5.4.4 KahaDB 内部存储结构
 
-![1536822002207](E:\文档\study-note\MQ.assets\1536822002207.png)
+![1536822002207](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1536822002207.png)
 
 - **Data logs**：存放完整的每条消息(包括事务、目的地、id、优先级、具体内容等)和producerSequenceIdTracker(用来验证每个消息生成者发送的消息是否重复的数据结构)。它随着消息数量的增多，如每32M一个文件，文件名按照数字进行编号，如db-1.log、db-2.log、db-3.log … 
 
@@ -344,7 +344,7 @@ KahaDB 是从 ActiveMQ **5.4 开始默认的持久化插件**。KahaDb 恢复时
 
 同步异步数据流转图：
 
-![1536739013027](E:\文档\study-note\MQ.assets\1536739013027.png)
+![1536739013027](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1536739013027.png)
 
 ##### 2.2.6.3 producerWindow
 
@@ -696,7 +696,7 @@ Message = ActiveMQTextMessage {...... redeliveryCounter = 4, text = 这是发送
 
 为了解决这个问题，ActiveMQ中引入了“死信队列”（Dead Letter Queue）的概念。即一条消息再被重发了多次后（**默认为重发6次redeliveryCounter==6**），将会被ActiveMQ移入“死信队列”。开发人员可以在这个Queue中查看处理出错的消息，进行人工干预。
 
-![1537166690430](E:\文档\study-note\ActiveMQ基础.assets\1537166690430.png)
+![1537166690430](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1537166690430.png)
 
 **默认情况下“死信队列”只接受PERSISTENT Message，如果NON_PERSISTENT Message超过了重发上限，将直接被删除。以下配置信息可以让NON_PERSISTENT Message在超过重发上限后，也移入“死信队列”**：
 
