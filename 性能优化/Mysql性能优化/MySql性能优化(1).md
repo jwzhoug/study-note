@@ -112,7 +112,16 @@ alter table test engine=innodb;
 * B Tree:
 * B+Tree: mysql的InnoDB和MYSAM引擎都是走的 B+Tree 索引
 
-## 5.2
+## 5.2 使用索引的优缺点
+
+**优点：**
+
+* 提高检索效率
+* 降低排序成本——排序/分组主要消耗的是我们的内存和cpu
+
+**缺点：**
+
+
 
 ## 5.3 创建索引需要注意什么
 
