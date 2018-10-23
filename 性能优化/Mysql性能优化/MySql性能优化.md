@@ -48,7 +48,7 @@ sql执行部分，需要经过：
 
 ![1540258115396](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540258115396.png)
 
-# 3 SQL 优化
+## 2.3 SQL 优化
 
 在了解到第2章的内容之后，那么我们SQL优化的操作是针对的哪些模块应该有一个大致的了解了：
 
@@ -60,25 +60,27 @@ sql执行部分，需要经过：
 
 **当然，要做这样的优化，我们还需要了解，数据库的引擎的原理，因为为什么做这样的优化，是由底层设计决定的**
 
-# 4 MySql 引擎
+# 3 MySql 引擎
 
 这里我们介绍MYSql现在主流的引擎
 
 ![1540260679767](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540260679767.png)
 
-## 4.1 Innodb 
+## 3.1 Innodb 
+
+### 3.1.1 Innodb 存储文件
 
 从上文中可以看到`Innodb`索引和数据存在一个文件中，存储形势：
 
 ![1540277142005](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540277142005.png)
 
-## 4.2 Myisam
+## 3.2 Myisam
 
 `Myisam`索引和数据文件是分开的，存储的形势是这样的，最后在B+Tree 的叶子节点上面会有数据的逻辑地址
 
 ![1540277065342](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540277065342.png)
 
-## 4.3 建表如何指定使用什么数据引擎呢
+## 3.3 建表如何指定使用什么数据引擎呢
 
 ```sql
  create table test(
@@ -92,11 +94,52 @@ engine=MyISAM --INNODB
 
 ```
 
-## 4.4 如何更改表的数据引擎
+## 3.4 如何更改表的数据引擎
 
 ```sql
 alter table test engine=innodb;
 ```
+
+# 4 行锁,表锁的优缺点
+
+```sql
+查看所得争用状态
+
+-- 表锁的征用状态查看
+show status like 'table%'
+
+-- 行锁的征用状态查看
+show status like 'innodb_row_lock%'
+```
+## 4.1 行锁的优缺点
+
+优点:
+
+* 粒度更小
+
+缺点:
+
+* 获取和释放需要做更多的工作
+
+* 容易产生死锁 : 一张表 test , 有 user_id , name 字段,
+
+  一个事务 A 执行
+
+  ```sql
+  update test set name = 'xiaoHong' where user_id = 1
+  update test set name = 'xiaoMing' where user_id = 3
+  ```
+
+  同时一个事务B 执行 
+
+  ```sql
+  update test set name = 'xiaoZhang' where user_id = 3
+  update test set name = 'xiaoHong' where user_id = 1
+  ```
+
+  可能出现的请款是,事务A执行了 第一句sql,获取了 user_id = 1 的行锁 ; 事务B执行了 第一句sql,获取了 user_id = 3 的行锁,然后他们这时候发现 A 获取不到 `user_id = 3` 
+
+## 4.2 行锁的优缺点
 
 # 5 Mysql中的索引
 
@@ -315,5 +358,7 @@ EXPLAIN SELECT * FROM student WHERE cid=1 AND name='小红';
 * **DDL (Data Definition language)** : 据库定义语言 比如：create , alter , drop , 等语句
 
 * **DCL (Data Control language ) ** : 数据库控制语言 用来设置或更改数据库用户或者较色权限的语句 比如: grant , deny , revoke 等
+
+   
 
   
