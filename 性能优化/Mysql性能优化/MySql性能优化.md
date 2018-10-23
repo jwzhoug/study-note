@@ -48,7 +48,7 @@ sql执行部分，需要经过：
 
 ![1540258115396](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540258115396.png)
 
-## 2.3 SQL 优化
+## 2.3 SQL 优化涉及的模块
 
 在了解到第2章的内容之后，那么我们SQL优化的操作是针对的哪些模块应该有一个大致的了解了：
 
@@ -74,11 +74,46 @@ sql执行部分，需要经过：
 
 ![1540277142005](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540277142005.png)
 
+### 3.1.2 Innodb 中的锁
+
+除了**行锁**，**表锁**之外，他还有**共享锁**，**排他锁**，**间隙锁**
+
+**什么时候使用行锁，什么时候使用表锁，是时候是读锁（共享锁），什么时候是写锁（排他锁）**
+
+众多资料中都说innodb使用的是行级锁，但实际上是有限制的。只有在你增删改查时匹配的条件字段带有索引时，innodb才会使用行级锁，在你增删改查时匹配的条件字段不带有索引时，innodb使用的将是表级锁。因为当你匹配条件字段不带有所引时，数据库会全表查询，所以这需要将整张表加锁,才能保证查询匹配的正确性。在生产环境中我们往往需要满足多人同时对一张表进行增删改查，所以就需要使用行级锁，所以这个时候一定要记住为匹配条件字段加索引。
+
+提到行级锁和表级锁时我们就很容易联想到读锁和写锁，因为只有触发了读写锁，我们才会谈是进行行级锁定还是进行表级锁定。那么什么时候触发读锁，就是在你用select 命令时触发读锁，什么时候触发写锁，就是在你使用update,delete,insert时触发写锁，并且使用rollback或commit后解除本次锁定。
+
+**再来看一下 间隙锁**：首先他也是基于索引的，比如表test 有一个字段 id 是索引字段 ， 我这时调用 
+
+```sql
+update test set name = 'aaaaaaaaa' where id < 4 and id >1
+-- 或者
+SELECT * FROM user WHERE user_id BETWEEM 1 AND 100
+```
+
+这时候就会锁住这个范围内的行。
+
+### 3.1.3 InnoDB行级锁定优化建议
+
+InnoDB的行级锁最大的优势就是增强了高并发的处理能力，缺点就是复杂性较高、易死锁，且基于索引实现有一定弊端。我们要做的就是扬长避短，合理利用InnoDB行级锁定，为此我们就应该做的：
+
+1. 尽可能让所有的数据检索都通过索引实现，因为InnoDB行级锁是基于索引实现的，没有索引或无法使用索引系统会改为使用表级锁。
+2. 合理设计索引，以缩小加锁范围，避免“间隙锁”造成不该锁定的键值被锁定。
+3. 尽量控制事务的大小，因为行级锁的复杂性会加大资源量以及锁定时间。
+4. 业务允许的情况下，使用较低级别的事务隔离，以减少因实现事务隔离而付出的成本。
+5. **避免死锁**，可以通过如下方式实现：
+   * 类似的业务模块中，尽可能按照相同的访问顺序来访问，防止产生死锁。
+   * 同一个事务中，尽量做到一次性锁定需要的所有资源。
+   * 对于易产生死锁的业务部分，增大处理颗粒度，升级为表级锁以降低死锁产生的概率。
+
 ## 3.2 Myisam
 
 `Myisam`索引和数据文件是分开的，存储的形势是这样的，最后在B+Tree 的叶子节点上面会有数据的逻辑地址
 
 ![1540277065342](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540277065342.png)
+
+
 
 ## 3.3 建表如何指定使用什么数据引擎呢
 
@@ -99,6 +134,12 @@ engine=MyISAM --INNODB
 ```sql
 alter table test engine=innodb;
 ```
+
+
+
+## 3.5 关于这部分内容更多的细节请看
+
+https://blog.csdn.net/zhangliangzi/article/details/51408215
 
 # 4 行锁,表锁的优缺点
 
@@ -137,9 +178,19 @@ show status like 'innodb_row_lock%'
   update test set name = 'xiaoHong' where user_id = 1
   ```
 
-  可能出现的请款是,事务A执行了 第一句sql,获取了 user_id = 1 的行锁 ; 事务B执行了 第一句sql,获取了 user_id = 3 的行锁,然后他们这时候发现 A 获取不到 `user_id = 3` 
+  可能出现的请款是,事务A执行了 第一句sql,获取了 user_id = 1 的行锁 ; 事务B执行了 第一句sql,获取了 user_id = 3 的行锁,然后他们这时候发现 A 获取不到 `user_id = 3` B返现获取不到`user_id=1`的行锁，这时候事务A ,B 都不能执行完成，都无法释放锁
 
 ## 4.2 行锁的优缺点
+
+优点:
+
+- 实现逻辑简单
+- 获取释放快 
+- 避免了死锁
+
+缺点:
+
+- 粒度打，并发度不足
 
 # 5 Mysql中的索引
 
@@ -275,7 +326,7 @@ EXPLAIN SELECT * FROM student WHERE cid=1 AND name='小红';
 * **我们选择什么做主键比较好**：能选择自增id做主键是最好的情况，从B+Tree的插入过程原理，可以知道使用自增组件做插入的时候，我们的插入和分裂过程都集中到右子树，同时插入一边都是到最右边的叶子节点，同时分裂，也是针对那一部分，
 * **尽量选择数字的字段做索引**
 
-# 6 SQL 执行计划
+# 6 SQL 优化
 
 ## 6.1 什么是执行计划？
 
@@ -287,67 +338,104 @@ EXPLAIN SELECT * FROM student WHERE cid=1 AND name='小红';
 
 在select语句之前 加上`explain`:
 
-比如：`EXPLAIN select * from goods where price = 70`
+比如：
+
+```sql
+EXPLAIN select * from goods where price = 70
+```
 
 增删改语句也可以变相的使通过`explain`来查看执行计划，因为增删改也是带有查询语句的，比如
 
-`update goods set price = 100 where goodId=2 `
+```sql
+update goods set price = 100 where goodId=2 
+```
 
-这时候我们可以通过`EXPLAIN select * from goods where goodId=2 `,来查看执行计划，看是否按照你所想要的结果高效执行
+这时候我们可以通过
 
-**那么 sql 查询中 为了提高查询效率 ， 需要注意的什么呢？**
+```sql
+EXPLAIN select * from goods where goodId=2 
+```
+
+
+
+来查看执行计划，看是否按照你所想要的结果高效执行
+
+
 
 ## 6.3 通过查看执行计划总结得出：
 
-1. 首先需要写出 统一 的 sql 语句 举例：
-    * select * from tablename
-    * select * FROM tablename
+1. 永远用小结果集驱动大结果级（主要针对 join 语句）
+
+2. select 中 值拿自己需要的字段，别用 * 
+
+3. 首先需要写出 统一 的 sql 语句 举例：
+
+    ```sql
+    select * from tablename
+    select * FROM tablename
+    ```
 
     虽然只是大小写不同 ，但是查询分析器 就认为这是两个不同的sql 语句，他需要去解析两次，生成两个执行计划
 
     所以我们 在写程序的时候 应该去保证同样的 SQL语句 在任何地方都是一致的。多一个空格都不可以
 
-2. 尽量不要把 SQL语句 写的太长，太过冗余
+4. 尽量不要把 SQL语句 写的太长，太过冗余
 
      根据经验嵌套超过三层，查询优化器就很容易给出错误的执行计划。另外执行计划是可以复用的，越是简单的SQL语句复用的可能性越高。 而复杂的SQL语句只要有一个字符发生变化，就必须重新解析。然后这样的垃圾信息，还会被缓存在内存中，可想而知，数据库的性能会受到多大影响
 
-3. 合理使用 like 模糊查询
+5. 合理使用 like 模糊查询
 
      like '%xxx' 这样的 % 号出现在关键字前面的模糊查询 肯定会走全表扫描，因此 除非必要，否则不要在关坚持前面加%。
 
-4. 应该尽量避免在 where 字句中 对字段进行 null 值得判断 不管是 is null / is not null
+6. 应该尽量避免在 where 字句中 对字段进行 null 值得判断 不管是 is null / is not null
 
-   比如 : select id from table where name is null     假设 这个表我们对 name 设置
-   了索引，但是 查询分析器不会使用索引，因此查询效率低下。为了避免这样的情况发生，我们应该设置表的值为0或'’根据你字段类型来设置一个值，不管怎么也别是null.这样就可以 通过 判断 name = 0 或则是 name = ...‘’来过滤了
+   比如 : 
 
-5. 避免在 where 字句中 使用 不等于 ！= 或则 <> 这样的操作符
+   ```     sql
+   select id from table where name is null
+   ```
 
-     比如 : select id from table where name != 0
+   假设 这个表我们对 name 设置了索引，但是查询分析器不会使用索引，因此查询效率低下。为了避免这样的情况发生，我们应该设置表的值为0或'’根据你字段类型来设置一个值，不管怎么也别是null.这样就可以 通过 判断 name = 0 或则是 name = ...‘’来过滤了
+
+7. 避免在 where 字句中 使用 不等于 ！= 或则 <> 这样的操作符
+
+     比如 : 
+
+     ```sql
+     select id from table where name != 0
+     ```
 
      使用这种查询条件操作符 不会使用索引，而 > , >= , < , <= , = , between and ,这样的操作符，数据库才会使用
-     索引。那么该sql 应该写成 select id from table where name > 0 union all select id from table where name <0
+     索引。那么该sql 应该写成
 
-6. 为什么 上述5的 优化后sql 不适用 or 呢 ， 因为 我们也需要避免在 SQL语句中 使用 or 来连接条件
+     ```sql
+      select id from table where name > 0 union all select id from table where name <0
+     ```
 
-7. 少用 in 或 not in  ，在子查询当中用 exists 代替 in 是一个好的选择
+8. 为什么 上述5的 优化后sql 不适用 or 呢 ， 因为 我们也需要避免在 SQL语句中 使用 or 来连接条件
 
-8. 避免在 where 字句中进行 函数 或 表达式 操作
+9. 少用 in 或 not in  ，在子查询当中用 exists 代替 in 是一个好的选择
+
+10. 避免在 where 字句中进行 函数 或 表达式 操作
 
     比如：
 
-    * select id from table where name/2 = 50
-    * select id from table where substring(name,1,8) = 'xxxx'
+    ```sql
+    select id from table where name/2 = 50
+    select id from table where substring(name,1,8) = 'xxxx'
+    ```
 
-9. 在子查询当中 用 exists 代替 in 是一个好的选择
+11. 在子查询当中 用 exists 代替 in 是一个好的选择
 
-10. count(*) 这样不带任何条件的 count 会导致全表扫描
+12. count(*) 这样不带任何条件的 count 会导致全表扫描
+
+     
 
 # 6 性能优化
 
-## 6.1 影响性能的因素
-
 * 人为因素 : 考虑自己的需求设计是否合理 ; 结构，架构设计是否合理。............
-* sql : 这个就需要用到前面的知识做优化了
+* sql优化 : 
+* 锁优化：请看第3和第4界中关于锁的介绍
 
 # 补充说明
 
