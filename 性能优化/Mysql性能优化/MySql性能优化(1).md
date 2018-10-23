@@ -62,54 +62,75 @@ sql执行部分，需要经过：
 
 # 4 MySql 引擎
 
+这里我们介绍MYSql现在主流的引擎
+
+![1540260679767](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540260679767.png)
+
+## 4.1 Innodb 
+
+从上文中可以看到`Innodb`索引和数据存在一个文件中
 
 
-# 3 Mysql中的索引
 
-## 什么是索引
+## 4.2 Myisam
+
+`Myisam`索引和数据文件是分开的
+
+## 4.3 建表如何指定使用什么数据引擎呢
+
+```sql
+ create table test(
+ id int(10) unsigned not null auto_increment,
+ name varchar(10) character set utf8,
+ age int(10),
+ primary key(id)
+ )
+engine=MyISAM --INNODB
+;
+
+```
+
+## 4.4 如何更改表的数据引擎
+
+```sql
+alter table test engine=innodb;
+```
+
+# 5 Mysql中的索引
+
+## 5.1 什么是索引
 
 **索引是高效获取数据的数据结构，在数据存储系统中索引以文件形势存在。**
 
-## 索引有哪些
-
-- [Binary and Linear Search (of sorted list)](https://www.cs.usfca.edu/~galles/visualization/Search.html)：二元线性搜索
-- [Binary Search Trees](https://www.cs.usfca.edu/~galles/visualization/BST.html)：二分搜索树
-- [AVL Trees (Balanced binary search trees)](https://www.cs.usfca.edu/~galles/visualization/AVLtree.html)：平衡二叉搜索树
-- [Red-Black Trees](https://www.cs.usfca.edu/~galles/visualization/RedBlack.html)：红黑树
-- [Splay Trees](https://www.cs.usfca.edu/~galles/visualization/SplayTree.html)：8角树
-- [Open Hash Tables (Closed Addressing)](https://www.cs.usfca.edu/~galles/visualization/OpenHash.html)
-- [Closed Hash Tables (Open Addressing)](https://www.cs.usfca.edu/~galles/visualization/ClosedHash.html) :开方式寻址hash
-- [Closed Hash Tables, using buckets](https://www.cs.usfca.edu/~galles/visualization/ClosedHashBucket.html):使用桶的封闭哈希表
-- [Trie (Prefix Tree, 26-ary Tree)](https://www.cs.usfca.edu/~galles/visualization/Trie.html): 前缀树
-- [Radix Tree (Compact Trie)](https://www.cs.usfca.edu/~galles/visualization/RadixTree.html)：基树
-- [Ternary Search Tree (Trie with BST of children)](https://www.cs.usfca.edu/~galles/visualization/TST.html)：三叉树
-- [B Trees](https://www.cs.usfca.edu/~galles/visualization/BTree.html)：
-- [B+ Trees：](https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html)
-
-## Mysql中用到的索引
-
-这里是一部分，后续更新之后有没有新的我不知道
+这里介绍一部分mysql中所用到的索引
 
 * hash :  不建议使用，也最好不要用。原因：
   * 因为hash容易产生hash冲突
   * **无法做范围查询，只能做等值查询的索引，不符合实际运用情况**, 比如：select * from table where id > 1
-
 * FullText ：类似全文检索的索引
-
-* R Tree:
-
+* R Tree:空间索引，一般不涉及到那样的也为用不到
 * B Tree:
-
 * B+Tree: mysql的InnoDB和MYSAM引擎都是走的 B+Tree 索引
 
-  
+## 5.2
 
-**什么是执行计划？**
+## 5.3 创建索引需要注意什么
+
+* 较频繁的作为查询条件的字段**应该创建索引**，索引怎么创建
+
+* 唯一性太差（数据重复率太高）的字段**不适合创建索引**
+* 更新非常频繁的字段**不适合创建索引**
+* 不会出现在where子句中的字段**不适合创建索引**
+
+# 6 SQL 执行计划
+
+## 6.1 什么是执行计划？
+
 执行计划 ： 数据库根据SQL语句和相关表的统计信息作出的查询方案，该方案由查询优化器自动解析产生
 比如，一条SQL语句是从10条数据中查询一条数据，正常情况 查询优化器 会选择索引查找的方
 式。  如果此时你的SQL语句使用不当 那么很可能就要进行全表扫描了
 
-**怎么看执行计划？**
+## 6.2 怎么看执行计划？
 
 在select语句之前 加上`explain`:
 
@@ -123,7 +144,7 @@ sql执行部分，需要经过：
 
 **那么 sql 查询中 为了提高查询效率 ， 需要注意的什么呢？**
 
-通过查看执行计划总结得出：
+## 6.3 通过查看执行计划总结得出：
 
 1. 首先需要写出 统一 的 sql 语句 举例：
     * select * from tablename
@@ -168,10 +189,21 @@ sql执行部分，需要经过：
 
 10. count(*) 这样不带任何条件的 count 会导致全表扫描
 
+# 6 性能优化
+
+## 6.1 影响性能的因素
+
+* 人为因素 : 考虑自己的需求设计是否合理 ; 结构，架构设计是否合理。............
+* sql : 这个就需要用到前面的知识做优化了
+
 # 补充说明
 
 ## 数据库语句大致分类
 
 * **DML (Data Munipulation language)** : 数据操作语言 对表的增删改这些语句
+
 * **DDL (Data Definition language)** : 据库定义语言 比如：create , alter , drop , 等语句
+
 * **DCL (Data Control language ) ** : 数据库控制语言 用来设置或更改数据库用户或者较色权限的语句 比如: grant , deny , revoke 等
+
+  
