@@ -180,7 +180,7 @@ show status like 'innodb_row_lock%'
 
   可能出现的请款是,事务A执行了 第一句sql,获取了 user_id = 1 的行锁 ; 事务B执行了 第一句sql,获取了 user_id = 3 的行锁,然后他们这时候发现 A 获取不到 `user_id = 3` B返现获取不到`user_id=1`的行锁，这时候事务A ,B 都不能执行完成，都无法释放锁
 
-## 4.2 行锁的优缺点
+## 4.2 表锁的优缺点
 
 优点:
 
@@ -359,20 +359,18 @@ EXPLAIN select * from goods where goodId=2
 **mysql 5.6 之后 可以直接在select 以外的语句上使用**
 
 ```sql
-EXPLAIN update goods set price = 100 where goodId=2 
+EXPLAIN update test set price = 100 where goodId=2  
 ```
 
 
 
-运行这样的语句之后我们能看到
+运行这样的语句之后我们能看到，
 
 ![1540302293728](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540302293728.png)
 
 下面我们来看看这些字段怎么去理解：
 
 * Id：包含一组数字，表示查询中执行select子句或操作表的顺序（**执行顺序从大到小执行；  当id值一样的时候，执行顺序由上往下。**）
-
-
 
 * select_type: 表示查询中每个select子句的类型（简单OR复杂）：
   * SIMPLE（简单的）：查询中不包含子查询或者UNION（联合）。
@@ -405,35 +403,23 @@ EXPLAIN update goods set price = 100 where goodId=2
 
  
 
-possible_keys：指出MySQL能使用哪个索引在表中找到行，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询使用。
+* possible_keys：指出MySQL能使用哪个索引在表中找到行，查询涉及到的字段上若存在索引，将列出该索引，但不一定被查询使用。
+* key：显示MySQL在查询中实际使用的索引，若没有使用索引，显示为NULL。当查询中若使用了覆盖索引，则该索引仅出现在key列表中。
+* key_len：表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度。
+* ref：表示上述表的连接匹配条件，即那些列或常量被用于查找索引列上的值。
+* rows：表示MySQL根据表统计信息及索引选用情况，估算的找到所需的记录所需要读取的行数。
 
-key：显示MySQL在查询中实际使用的索引，若没有使用索引，显示为NULL。当查询中若使用了覆盖索引，则该索引仅出现在key列表中。
+* Extra：包含不适合在其他列中显示但十分重要的额外信息。
+  * Using where：表示MySQL服务器在存储引擎受到记录后进行“后过滤”（Post-filter）,如果查询未能使用索引，Using where的作用只是提醒我们MySQL将用where子句来过滤结果集。
+    * Using  ：表示MySQL需要使用临时表来存储结果集，常见于排序和分组查询。
 
-key_len：表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度。
+    * Using filesort：MySQL中无法利用索引完成的排序操作称为“文件排序”。 
 
-ref：表示上述表的连接匹配条件，即那些列或常量被用于查找索引列上的值。
-
-rows：表示MySQL根据表统计信息及索引选用情况，估算的找到所需的记录所需要读取的行数。
-
- 
-
-Extra：包含不适合在其他列中显示但十分重要的额外信息。
-
-　　1. Using where：表示MySQL服务器在存储引擎受到记录后进行“后过滤”（Post-filter）,如果查询未能使用索引，Using where的作用只是提醒我们MySQL将用where子句来过滤结果集。
-
-　　2. Using  ：表示MySQL需要使用临时表来存储结果集，常见于排序和分组查询。
-
-　　3. Using filesort：MySQL中无法利用索引完成的排序操作称为“文件排序”。
-
- 
-
- 
-
-**四。数据库执行计划的局限性：**
+## 6.3 数据库执行计划的局限性：
 
 EXPLAIN不会告诉你关于触发器、存储过程的信息或用户自定义函数对查询的影响情况；
 
-EXPLAIN不考虑各种Cache（通常人们所说的Cache就是指缓存SRAM。 SRAM叫静态内存，“静态”指的是当我们将一笔数据写入SRAM后，除非重新写入[新数据](https://www.baidu.com/s?wd=%E6%96%B0%E6%95%B0%E6%8D%AE&tn=44039180_cpr&fenlei=mv6quAkxTZn0IZRqIHckPjm4nH00T1YLPHP-mhPbmW6vmHFbmvfk0ZwV5Hcvrjm3rH6sPfKWUMw85HfYnjn4nH6sgvPsT6KdThsqpZwYTjCEQLGCpyw9Uz4Bmy-bIi4WUvYETgN-TLwGUv3EnWT3PWR3PHR)或关闭电源，否则写入的数据保持不变）；
+EXPLAIN不考虑各种Cache（通常人们所说的Cache就是指缓存SRAM。 SRAM叫静态内存，“静态”指的是当我们将一笔数据写入SRAM后，除非重新写入新数据或关闭电源，否则写入的数据保持不变)；
 
 EXPLAIN不能显示MySQL在执行查询时所作的优化工作；
 
@@ -441,11 +427,7 @@ EXPLAIN不能显示MySQL在执行查询时所作的优化工作；
 
 EXPALIN只能解释SELECT操作，其他操作要重写为SELECT后查看执行计划。（mysql5.6的版本已经支持直接查看）
 
-
-
-
-
-## 6.3 通过查看执行计划总结得出：
+## 6.4 通过查看执行计划总结得出：
 
 1. 永远用小结果集驱动大结果级（主要针对 join 语句）
 
