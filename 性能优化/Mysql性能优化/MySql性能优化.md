@@ -8,7 +8,7 @@
 
 # 1 Mysql 整体架构图
 
-![20170320171720213](https://github.com/Alan-Jun/study-note/tree/master/study-note.assets/20170320171720213.png)
+![20170320171720213](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/20170320171720213.png)
 
 我们平时使用的都是上面的Client层，也就是客户端
 
