@@ -372,6 +372,8 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 
 ## 6.3 执行计划中个字段值的解释
 
+这部分内容来源 https://blog.csdn.net/wuseyukui/article/details/71512793
+
 ### id
 
 三种情况： 
@@ -476,7 +478,19 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 
   
 
-* 啊
+* **Using index**： 
+  表示相应的select操作中使用了覆盖索引（Covering Index），避免了访问表的数据行，效率高 
+  如果同时出现Using where，表明索引被用来执行索引键值的查找（参考上图） 
+
+* **Using where** ：  使用了where过滤 
+
+* **Using join buffer** ：  使用了链接缓存 
+
+* **Impossible WHERE**：  where子句的值总是false，不能用来获取任何元祖  
+
+* **select tables optimized away **：  在没有group by子句的情况下，基于索引优化MIN/MAX操作或者对于MyISAM存储引擎优化COUNT（*）操作，不必等到执行阶段在进行计算，查询执行计划生成的阶段即可完成优化 
+
+* **distinct**：  优化distinct操作，在找到第一个匹配的元祖后即停止找同样值得动作 
 
 ## 6.4 数据库执行计划的局限性：
 
