@@ -359,63 +359,126 @@ EXPLAIN select * from goods where goodId=2
 **mysql 5.6 之后 可以直接在select 以外的语句上使用**
 
 ```sql
-EXPLAIN update test set price = 100 where goodId=2  
+EXPLAIN update test set name = 'xiaoZhang' where id = 2
 ```
 
 
 
-运行这样的语句之后我们能看到，
+运行这样的语句之后我们能看到，有些sql是有多条执行计划的
 
-![1540302293728](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540302293728.png)
+![1540353436428](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540353436428.png)
 
-下面我们来看看这些字段怎么去理解：
+下面我们来看看这些字段怎么去理解
 
-* Id：包含一组数字，表示查询中执行select子句或操作表的顺序（**执行顺序从大到小执行；  当id值一样的时候，执行顺序由上往下。**）
+## 6.3 执行计划中个字段值的解释
 
-* select_type: 表示查询中每个select子句的类型（简单OR复杂）：
-  * SIMPLE（简单的）：查询中不包含子查询或者UNION（联合）。
-    * PRIMARY（基本的，首要的）：查询中若包含任何复杂的子查询，最外层查询则被标记为PRIMARY。
+### id
 
-    * SUBQUERY（子查询）：在SELECT或WHERE列表中包含了子查询，该子查询被标记为SUBQUERY。
+三种情况： 
+1、id相同：执行顺序由上至下 
 
-    * DERIVED（衍生）：在FROM列表中包含的子查询被标记为DERIVED（衍生）。
+![1540372459936](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540372459936.png)
 
-    * 若第二个SELECT出现在UNION之后，则被标记为UNION。
+2、id不同：如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行 
 
-    * 若UNION包含在FROM子句的子查询中，外层SELECT将被标记为：DERIVED。
+![1540372473277](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540372473277.png)
 
-    * 从UNION表获取结果的SELECT被标记为：UNION RESULT（结合的结果）。 
-* table：表名称
-* Type：表示MySQL在表中找到所需行的方式，又称“访问类型”，常见有以下几种：
-    * ALL：Full Table Scan， MySQL将进行全表扫描。
 
-    * index：Full Index Scan，index与ALL区别为index类型只遍历索引树。
+3、id相同又不同（两种情况同时存在）：id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行 
 
-    * range：range Index Scan，对索引的扫描开始于某一点，返回匹配值域的行，常见于between、<、>等的查询。
+![1540372498601](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540372498601.png)
 
-    * ref：非唯一性索引扫描，返回匹配某个单独值的所有行。常见于使用非唯一索引或唯一索引的非唯一前缀进行的查找。
+### select_type
 
-    * eq_ref：唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描。
+* **SIMPLE**：简单的select查询，查询中不包含子查询或者union 
+* **PRIMARY**：查询中包含任何复杂的子部分，最外层查询则被标记为primary 
+* **SUBQUERY**：在select 或 where列表中包含了子查询 
+* **DERIVED**：在from列表中包含的子查询被标记为derived（衍生），mysql或递归执行这些子查询，把结果放在临时表里 
+* **UNION**：若第二个select出现在union之后，则被标记为union；若union包含在from子句的子查询中，外层select将被标记为derived 
+* **UNION RESULT**：从union表获取结果的select  
 
-    * const、system：当MySQL对查询某部分进行优化，并转换为一个常量时，使用这些类型访问。如将主键置于where列表中，MySQL就能将该查询转换为一个常量。
+![1540372639970](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540372639970.png)
 
-    * NULL：MySQL在优化过程中分解语句，执行时甚至不用访问表或索引。
+### type
 
- 
+访问类型，sql查询优化中一个很重要的指标，结果值从好到坏依次是：
 
-* possible_keys：指出MySQL能使用哪个索引在表中找到行，查询涉及到的字段上若存在索引，将列出该索引，但不一定被查询使用。
-* key：显示MySQL在查询中实际使用的索引，若没有使用索引，显示为NULL。当查询中若使用了覆盖索引，则该索引仅出现在key列表中。
-* key_len：表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度。
-* ref：表示上述表的连接匹配条件，即那些列或常量被用于查找索引列上的值。
-* rows：表示MySQL根据表统计信息及索引选用情况，估算的找到所需的记录所需要读取的行数。
+**system** > **const** > **eq_ref** > **ref** > **fulltext** > **ref_or_null** > **index_merge** > **unique_subquery** > **index_subquery** > **range** > **index** > **ALL**
 
-* Extra：包含不适合在其他列中显示但十分重要的额外信息。
-  * Using where：表示MySQL服务器在存储引擎受到记录后进行“后过滤”（Post-filter）,如果查询未能使用索引，Using where的作用只是提醒我们MySQL将用where子句来过滤结果集。
-    * Using  ：表示MySQL需要使用临时表来存储结果集，常见于排序和分组查询。
+一般来说，好的sql查询至少达到range级别，最好能达到ref
 
-    * Using filesort：MySQL中无法利用索引完成的排序操作称为“文件排序”。 
+* **system**：表只有一行记录（等于系统表），这是const类型的特例，平时不会出现，可以忽略不计
 
-## 6.3 数据库执行计划的局限性：
+* **const**：表示通过索引一次就找到了，const用于比较primary key 或者 unique索引。因为只需匹配一行数据，所有很快。如果将主键置于where列表中，mysql就能将该查询转换为一个const 
+
+  ![1540372808902](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540372808902.png)
+
+* **eq_ref**：唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。**常见于主键 或 唯一索引扫描。** 
+
+* **ref**：非唯一性索引扫描，返回匹配某个单独值的所有行。**本质是也是一种索引访问**，**它返回所有匹配某个单独值的行，然而他可能会找到多个符合条件的行，所以它应该属于查找和扫描的混合体**  
+
+  ![1540373089352](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540373089352.png)
+
+* **range**：只检索给定范围的行，使用一个索引来选择行。key列显示使用了那个索引。一般就是在where语句中出现了bettween、<、>、in等的查询。这种索引列上的范围扫描比全索引扫描要好。只需要开始于某个点，结束于另一个点，不用扫描全部索引  
+
+  ![1540373203005](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540373203005.png)
+
+* **index**：Full Index Scan，index与ALL区别为index类型只遍历索引树。这通常比ALL快，因为索引文件通常比数据文件小。（**Index与ALL虽然都是读全表，但index是从索引中读取，而ALL是从硬盘读取**）
+
+* **ALL**：Full Table Scan，遍历全表以找到匹配的行  
+
+### possible_keys 
+
+查询涉及到的字段上存在索引，该索引将被列出，但不一定被查询实际使用 
+
+### key
+
+实际使用的索引，如果为NULL，则没有使用索引。 
+**查询中如果使用了覆盖索引，则该索引仅出现在key列表中**
+
+**覆盖索引**：也叫索引覆盖。就是select列表中的字段，只用从索引中就能获取，不必根据索引再次读取数据文件。  
+
+![1540373698206](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540373698206.png)
+
+注意上面查询语句的字段就算顺序不一致也是会使用这个索引的，也就是说这样写也没事
+
+```sql
+ select email ,name from t1
+```
+
+![1540373731236](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540373731236.png)
+
+### key_len
+
+表示索引中使用的字节数，查询中使用的索引的长度（最大可能长度），并非实际使用长度，理论上长度越短越好。key_len是根据表定义计算而得的，不是通过表内检索出的
+
+### ref
+
+显示索引的那一列被使用了，如果可能，是一个常量const。
+
+### rows
+
+根据表统计信息及索引选用情况，大致估算出找到所需的记录所需要读取的行数
+
+### Extra
+
+不适合在其他字段中显示，但是十分重要的额外信息
+
+* **Using filesort** ：  mysql对数据使用一个外部的索引排序，而不是按照表内的索引进行排序读取。也就是说mysql无法利用索引完成的排序操作成为“文件排序”  
+
+  ![1540374065403](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540374065403.png)
+
+  由于索引是先按email排序、再按address排序，所以查询时如果直接按address排序，索引就不能满足要求了，mysql内部必须再实现一次“文件排序” 
+
+* **Using temporary**：  使用临时表保存中间结果，也就是说mysql在对查询结果排序时使用了临时表，常见于order by 和 group by  
+
+  ![1540374132671](E:\文档\study-note\性能优化\Mysql性能优化\assets\1540374132671.png)
+
+  
+
+* 啊
+
+## 6.4 数据库执行计划的局限性：
 
 EXPLAIN不会告诉你关于触发器、存储过程的信息或用户自定义函数对查询的影响情况；
 
@@ -427,7 +490,7 @@ EXPLAIN不能显示MySQL在执行查询时所作的优化工作；
 
 EXPALIN只能解释SELECT操作，其他操作要重写为SELECT后查看执行计划。（mysql5.6的版本已经支持直接查看）
 
-## 6.4 通过查看执行计划总结得出：
+## 6.5 通过查看执行计划总结得出：
 
 1. 永远用小结果集驱动大结果级（主要针对 join 语句）
 
@@ -496,7 +559,7 @@ EXPALIN只能解释SELECT操作，其他操作要重写为SELECT后查看执行�
 
      
 
-# 6 性能优化
+# 7 性能优化
 
 * 人为因素 : 考虑自己的需求设计是否合理 ; 结构，架构设计是否合理。............
 * sql优化 : 
