@@ -508,7 +508,7 @@ EXPALIN只能解释SELECT操作，其他操作要重写为SELECT后查看执行�
 
 ## 6.5 通过查看执行计划总结得出：
 
-1. 永远用小结果集驱动大结果级（主要针对 join 语句）
+1. **永远用小结果集驱动大结果级（主要针对 join 语句）**
 
 2. select 中 值拿自己需要的字段，别用 * 
 
@@ -562,18 +562,24 @@ EXPALIN只能解释SELECT操作，其他操作要重写为SELECT后查看执行�
 
 10. 避免在 where 字句中进行 函数 或 表达式 操作
 
-    比如：
+     比如：
 
-    ```sql
-    select id from table where name/2 = 50
-    select id from table where substring(name,1,8) = 'xxxx'
-    ```
+     ```sql
+     select id from table where name/2 = 50
+     select id from table where substring(name,1,8) = 'xxxx'
+     ```
 
 11. 在子查询当中 用 exists 代替 in 是一个好的选择
 
 12. count(*) 这样不带任何条件的 count 会导致全表扫描
 
-     
+## 6.6  关于使用 order by  需要注意的
+
+**在使用order by 子句的时候，如果条件只包含 主键的话，性能是最好的，由于 innodb的实现使用了 B+Tree,并且由主键构建的索引是和数据绑定的聚集索引，所以是不需要做额外的排序的**
+
+但是别的索引就没这样的好处了，排序还是要将数据放到内存中去做一次排序的。
+
+MySIAM 引擎的完全没有上述的功能，因为他不是聚集索引
 
 # 7 性能优化
 
