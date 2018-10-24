@@ -8,7 +8,7 @@
 
 # 1 Mysql 整体架构图
 
-![20170320171720213](E:\文档\study-note\study-note.assets/20170320171720213.png)
+![20170320171720213](https://github.com/Alan-Jun/study-note/tree/master/study-note.assets/20170320171720213.png)
 
 我们平时使用的都是上面的Client层，也就是客户端
 
@@ -16,7 +16,7 @@
 
 上图server部分的简图：
 
-![1540258068280](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540258068280.png)
+![1540258068280](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540258068280.png)
 
 # 2 细化的流程交互图
 
@@ -46,7 +46,7 @@ sql执行部分，需要经过：
 
 
 
-![1540258115396](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540258115396.png)
+![1540258115396](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540258115396.png)
 
 ## 2.3 SQL 优化涉及的模块
 
@@ -64,7 +64,7 @@ sql执行部分，需要经过：
 
 这里我们介绍MYSql现在主流的引擎
 
-![1540260679767](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540260679767.png)
+![1540260679767](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540260679767.png)
 
 ## 3.1 Innodb 
 
@@ -72,7 +72,7 @@ sql执行部分，需要经过：
 
 从上文中可以看到`Innodb`索引和数据存在一个文件中，存储形势：
 
-![1540277142005](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540277142005.png)
+![1540277142005](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540277142005.png)
 
 ### 3.1.2 Innodb 中的锁
 
@@ -111,7 +111,7 @@ InnoDB的行级锁最大的优势就是增强了高并发的处理能力，缺�
 
 `Myisam`索引和数据文件是分开的，存储的形势是这样的，最后在B+Tree 的叶子节点上面会有数据的逻辑地址
 
-![1540277065342](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540277065342.png)
+![1540277065342](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540277065342.png)
 
 
 
@@ -379,16 +379,16 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 三种情况： 
 1、id相同：执行顺序由上至下 
 
-![1540372459936](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372459936.png)
+![1540372459936](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372459936.png)
 
 2、id不同：如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行 
 
-![1540372473277](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372473277.png)
+![1540372473277](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372473277.png)
 
 
 3、id相同又不同（两种情况同时存在）：id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行 
 
-![1540372498601](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372498601.png)
+![1540372498601](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372498601.png)
 
 ### select_type
 
@@ -399,7 +399,7 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 * **UNION**：若第二个select出现在union之后，则被标记为union；若union包含在from子句的子查询中，外层select将被标记为derived 
 * **UNION RESULT**：union中的合并结果
 
-![1540372639970](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372639970.png)
+![1540372639970](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372639970.png)
 
 ### type
 
@@ -413,17 +413,17 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 
 * **const**：表示通过索引一次就找到了，const用于比较primary key 或者 unique索引。因为只需匹配一行数据，所有很快。如果将主键置于where列表中，mysql就能将该查询转换为一个const 
 
-  ![1540372808902](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372808902.png)
+  ![1540372808902](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540372808902.png)
 
 * **eq_ref**：唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。**常见于主键 或 唯一索引扫描。** 
 
 * **ref**：非唯一性索引扫描，返回匹配某个单独值的所有行。**本质是也是一种索引访问**，**它返回所有匹配某个单独值的行，然而他可能会找到多个符合条件的行，所以它应该属于查找和扫描的混合体**  
 
-  ![1540373089352](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373089352.png)
+  ![1540373089352](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373089352.png)
 
 * **range**：只检索给定范围的行，使用一个索引来选择行。key列显示使用了那个索引。一般就是在where语句中出现了bettween、<、>、in等的查询。这种索引列上的范围扫描比全索引扫描要好。只需要开始于某个点，结束于另一个点，不用扫描全部索引  
 
-  ![1540373203005](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373203005.png)
+  ![1540373203005](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373203005.png)
 
 * **index**：Full Index Scan，index与ALL区别为index类型只遍历索引树。这通常比ALL快，因为索引文件通常比数据文件小。（**Index与ALL虽然都是读全表，但index是从索引中读取，而ALL是从硬盘读取**）
 
@@ -440,7 +440,7 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 
 **覆盖索引**：也叫索引覆盖。就是select列表中的字段，只用从索引中就能获取，不必根据索引再次读取数据文件。  
 
-![1540373698206](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373698206.png)
+![1540373698206](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373698206.png)
 
 注意上面查询语句的字段就算顺序不一致也是会使用这个索引的，也就是说这样写也没事
 
@@ -448,7 +448,7 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
  select email ,name from t1
 ```
 
-![1540373731236](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373731236.png)
+![1540373731236](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540373731236.png)
 
 
 
@@ -470,13 +470,13 @@ EXPLAIN update test set name = 'xiaoZhang' where id = 2
 
 * **Using filesort** ：  mysql对数据使用一个外部的索引排序，而不是按照表内的索引进行排序读取。也就是说mysql无法利用索引完成的排序操作成为“文件排序”  
 
-  ![1540374065403](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540374065403.png)
+  ![1540374065403](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540374065403.png)
 
   由于索引是先按email排序、再按address排序，所以查询时如果直接按address排序，索引就不能满足要求了，mysql内部必须再实现一次“文件排序” 
 
 * **Using temporary**：  使用临时表保存中间结果，也就是说mysql在对查询结果排序时使用了临时表，常见于order by 和 group by  
 
-  ![1540374132671](https://github.com/Alan-Jun/study-note/tree/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540374132671.png)
+  ![1540374132671](https://github.com/Alan-Jun/study-note/blob/master/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/Mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/assets/1540374132671.png)
 
   
 
