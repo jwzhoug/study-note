@@ -29,11 +29,21 @@
 
 # 3.AOP中的基本概念
 
-* 切面（`Aspect`）:
-* 连接点（`Joinpoint`）：
-* 通知（`Advice`）:
-* 切入点（`PointCut`）:
-* 引入/引用（`Introduction`）:匹配
+* 切面（`Aspect`）: 一个关注点的模块化（实现），这个关注点可能会横切多个对象。
+
+* 连接点（`Joinpoint`）：程序执行过程中的某一个特定的点
+
+* 通知（`Advice`）: 在切面的某一个特定的连接点上执行的动作
+
+* 切入点（`PointCut`）: 匹配连接点的断言，
+
+* 引入/引用（`Introduction`）: 
+
 * 目标对象（`Taget Object`）: 被一个或则多个`Aspect`所`Advice`的对象,也叫做 `Advice Object`，由于Spring AOP是使用运行时代理实现的，因此该对象始终是*代理*对象（`AOP Proxy Object`）。 
+
 * AOP代理（`AOP Proxy`）: 由AOP框架创建的对象，用于实现`Aspect Contract`（`Advice`方法执行等功能）。在Spring Framework中，AOP代理将是JDK动态代理或CGLIB代理。 
-* 织入（`Weaving`）:
+
+* 织入（`Weaving`）: 把`Aspect`连接到其他应用程序的对象或类上，并创建一个被通知（`adviced`）对象，分为：**编译时织入，类加载时织入，执行时织入**
+
+  
+
