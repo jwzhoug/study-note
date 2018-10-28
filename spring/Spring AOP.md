@@ -31,13 +31,19 @@
 
 * 切面（`Aspect`）: 一个关注点的模块化（实现），这个关注点可能会横切多个对象。
 
-* 连接点（`Joinpoint`）：程序执行过程中的某一个特定的点
+* 连接点（`JoinPoint`）：程序执行过程中的某一个阶段点（比如方法的调用、异常的抛出等），在Spring AOP中，连接点*始终* 表示方法执行。 
 
-* 通知（`Advice`）: 在切面的某一个特定的连接点上执行的动作
+* 通知（`Advice`）: 在切面的某一个特定的连接点上执行的动作（处理逻辑），也就是向连接点注入的代码，类型包括：
 
-* 切入点（`PointCut`）: 匹配连接点的断言，
+  * `around advice`:
+  * `before advice`:
+  * `after advice`:
 
-* 引入/引用（`Introduction`）: 
+  许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点**周围**维护一系列拦截器。 
+
+* 切入点（`PointCut`）: 匹配连接点的断言，`Advice`与`PointCut`表达式相关联，并在`PointCut`匹配的任何`JoinPoint`处运行，**也就是说 `Pointcut`是`JoinPoint`的集合，它是程序中需要注入`Advice` 的位置的集合，指明`Advice`要在什么样的条件下才能被触发。`org.springframework.aop.Pointcut `接口用来指定到特定的类和方法。**
+
+* 引入/引用（`Introduction`）: `Spring AOP`允许您向任何`Advice Object`引入新接口（和相应的实现）。例如，您可以使用`Introduction`  使bean实现 `IsModified`接口
 
 * 目标对象（`Taget Object`）: 被一个或则多个`Aspect`所`Advice`的对象,也叫做 `Advice Object`，由于Spring AOP是使用运行时代理实现的，因此该对象始终是*代理*对象（`AOP Proxy Object`）。 
 
