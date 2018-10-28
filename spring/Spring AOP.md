@@ -33,11 +33,13 @@
 
 * 连接点（`JoinPoint`）：程序执行过程中的某一个阶段点（比如方法的调用、异常的抛出等），在Spring AOP中，连接点*始终* 表示方法执行。 
 
-* 通知（`Advice`）: 在`Aspect`的某一个特定的连接点上执行的动作（处理逻辑），也就是向连接点注入的代码，类型包括：
+* 通知（`Advice`）: 在`Aspect`的某一个特定的连接点上**执行的动作（处理逻辑）**，也就是向连接点注入的代码，类型包括：
 
   * `around advice`:
-  * `before advice`:
-  * `after advice`:
+  * `before advice`: 在`JoinPoint`之前执行但不能阻止执行流程进入`JoinPoint`的`Advice`（除非它(`Advice`)抛出异常）。 
+  * `after returning advice`: 在`JionPoint`正常完成后执行的*建议`Advice`
+  * `after throwing advice`: 如果方法是抛出异常退出，则执行 `Advice`
+  * `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
 
   许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点**周围**维护一系列拦截器。 
 
