@@ -180,20 +180,31 @@ execution(* com.xyz.service..*.*(..))
 #### 方法参数描述匹配
 
 * `args` : **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+  * 任何连接点，它接受一个参数，并且在运行时传递的参数是`Serializable` 
+
+  ```
+  args(java.io.Serializable)
+  ```
+
 * `@args` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
 #### 目标类匹配
 
 * `target` ：**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
 
-  * 目标对象实现AccountService接口的任何连接点
+  * 目标对象实现AccountService接口的任何连接点：
   ```java
     target(com.xyz.service.AccountService)
   ```
 
 * `@target` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
 
-  
+  - 目标对象具有`@Transactional`注释的任何连接点：
+
+  ```java
+  @target(org.springframework.transaction.annotation.Transactional)
+  ```
 
 * `within`: （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
@@ -211,7 +222,23 @@ execution(* com.xyz.service..*.*(..))
 
 * `@within` :**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-  
+  - 任何连接点（仅在Spring AOP中执行方法），其中目标对象的声明类型具有`@Transactional`注释：
+
+  ```java
+  @within(org.springframework.transaction.annotation.Transactional)
+  ```
+
+```
+@within(org.springframework.transaction.annotation.Transactional)
+```
+
+```
+@within(org.springframework.transaction.annotation.Transactional)
+```
+
+```
+@within(org.springframework.transaction.annotation.Transactional)
+```
 
 #### 当前AOP代理对象类型匹配
 
