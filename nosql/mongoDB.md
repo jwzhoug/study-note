@@ -48,3 +48,10 @@
 
 ![1540820524343](E:\文档\study-note\nosql\assets\1540820524343.png)
 
+![1540820560273](E:\文档\study-note\nosql\assets\1540820560273.png)
+
+![1540820582364](E:\文档\study-note\nosql\assets\1540820582364.png)
+
+![1540820601296](E:\文档\study-note\nosql\assets\1540820601296.png)
+
+![1540820656450](E:\文档\study-note\nosql\assets\1540820656450.png)

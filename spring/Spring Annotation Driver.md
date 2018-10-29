@@ -184,6 +184,8 @@ public class ConfigyrationDemo {
 
 ## 1.5 作用域 @Scope
 
+[作用于类型](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#beans-factory-scopes)
+
 ```java
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

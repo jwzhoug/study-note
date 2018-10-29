@@ -563,5 +563,27 @@ execution(* com.xyz.service..*.*(..))
 
 ### 6.4.1 xml
 
+```xml
+<aop:aspect id="usageTrackerAspect" ref="usageTracking">
+
+    <aop:declare-parents
+        types-matching="com.xzy.myapp.service.*+"
+        implement-interface="com.xyz.myapp.service.tracking.UsageTracked"
+        default-impl="com.xyz.myapp.service.tracking.DefaultUsageTracked"/>
+
+    <aop:before
+        pointcut="com.xyz.myapp.SystemArchitecture.businessService()
+            and this(usageTracked)"
+            method="recordUsage"/>
+
+</aop:aspect>
+```
+
+使用`aop:declare-parents`用于声明匹配类型具有新父级 
+
+`types-matching `: 描述匹配的类型，上面的 +号表示包括子类，比如` com.xzy.myapp.service.MyService+`
+
+匹配 MyService 以及 MyService 的子类 
+
 ### 6.4.2 注解的方式
 
