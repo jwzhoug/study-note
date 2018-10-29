@@ -64,3 +64,161 @@
 
 * Spring AOP 默认使用AOP代理的标准JDK ***动态*代理**。这使得任何接口（或接口集）都可以被代理。 
 * Spring AOP也可以使用CGLIB代理。这是代理类而不是接口所必需的。如果业务对象未实现接口，则默认使用CGLIB。 
+
+# 6.spring 具体的使用方式
+
+在spring 中 我们使用aop 主要也分为xml配置的方式和使用注解的方式。
+
+使用xml 方式  我们需要使用到一个非常重要的标签`<aop:config></aop:config>`,一个`<aop:config>`元素可以包含`pointcut, advisor, and aspect elements `
+
+`advisor` :  能够将`Advice`以更为复杂的方式织入到目标对象中，是将`Advice`包装为更复杂切面的装配器。
+
+## 6.1 Aspect
+
+### 6.1.1 xml 方式
+
+ ```xml
+<aop:config>
+    <aop:aspect id="myAspect" ref="aBean">
+        ...
+    </aop:aspect>
+</aop:config>
+
+<bean id="aBean" class="...">
+    ...
+</bean>
+ ```
+
+### 6.1.2 @Aspect 方式
+
+## 6.2 PointCut
+
+### 6.2.1 xml 方式
+
+```xml
+<aop:config>
+
+    <aop:pointcut id="businessService"
+        expression="execution(* com.xyz.myapp.service.*.*(..))"/>
+
+</aop:config>
+```
+
+也可以在  `Aspect` 中声明`PointCut`
+
+```XML
+<aop:config>
+
+    <aop:aspect id="myAspect" ref="aBean">
+
+        <aop:pointcut id="businessService"
+            expression="execution(* com.xyz.myapp.service.*.*(..))"/>
+
+        ...
+
+    </aop:aspect>
+
+</aop:config>
+```
+
+**expression的指示符有很多类型**：详情参考[支持的切入点指示符](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-pointcuts-designators),[常见切入点表达式 ](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-pointcuts-examples)
+
+**在多个表达式之间可以使用 ||,or 表示 或，使用 &&,and表示 与，使用 ！表示 非** 
+
+* 方法描述匹配
+  * `execution`:   **使用频率最高指示符**，执行表达式的格式是 ：
+
+  ```java
+  execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-pattern(param-pattern)throws-pattern? )
+  ```
+
+  从正则表达式中我们可以看出 `ret-type-pattern` ， `name-pattern` ，`param-pattern` 是必须的
+
+  `ret-type-pattern`:标识方法的返回值，需要使用全路径的类名如java.lang.String,也可以为*表示任何返回值； 　　　　
+
+  `name-pattern`:指定方法名, *  代表所有方法 ,  set* , 代表以set开头的所有方法. 　　　　
+
+  `param-pattern`:指定方法参数(声明的类型),(..)代表所有参数,(*)代表一个参数, ( * , String) 代表第一个参数为任何值,第二个为String类型. 
+
+  `modifiers-pattern`: 描述访问控制符 比如 `public`.....
+
+  `throws-pattern`: 描述抛出什么样的异常
+
+   表达式例子如下： 
+
+  - 执行任何公共方法：
+
+  ```java
+  execution(public * *(..))
+  ```
+
+  - 名称以“set”开头的任何方法的执行：
+
+  ```java
+  execution(* set*(..))
+  ```
+
+  - 执行`AccountService`接口定义的任何方法：
+
+  ```java
+  execution(* com.xyz.service.AccountService.*(..))
+  ```
+
+  - 执行service包中定义的任何类的任何方法：
+
+  ```java
+  execution(* com.xyz.service.*.*(..))
+  ```
+
+  - 执行service包或子包中定义的任何方法：
+
+  ```java
+  execution(* com.xyz.service..*.*(..))
+  ```
+
+* 方法参数描述匹配
+  * `args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+  * `@args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+* 目标类匹配
+  * `target` ： （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+  * `@target` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+  * `within`: （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+    * 服务包中的任何连接点：
+
+    ```java
+    within(com.xyz.service.*)
+    ```
+
+    - 服务包或子包中的任何连接点：	
+
+    ```java
+    within(com.xyz.service..*)
+    ```
+
+  * `@within` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+* 当前AOP代理对象类型匹配
+
+  * `this`:  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+    代理实现`AccountService`接口的任何连接点
+
+    ```java
+    this(com.xyz.service.AccountService)
+    ```
+
+* 标有...注解的方法匹配 
+  * `@annotation` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+* Spring AOP还支持另一个名为的PCD `bean` ，连接点的匹配限制为特定的命名Spring bean 
+
+  * 匹配特定的bean, 通过id 或 name
+
+  ```java
+  bean(id or Name)
+  ```
+
