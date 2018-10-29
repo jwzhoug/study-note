@@ -349,6 +349,34 @@ execution(* com.xyz.service..*.*(..))
 
 - `after throwing advice`: 如果方法是抛出异常退出，则执行 `Advice`
 
+  ```xml
+  <aop:aspect id="afterThrowingExample" ref="aBean">
+  
+      <aop:after-throwing
+          pointcut-ref="dataAccessOperation"
+          method="doRecoveryActions"/>
+  
+      ...
+  
+  </aop:aspect>
+  ```
+
+  method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://blog.csdn.net/owen_william/article/details/50812780
+
+  ```xml
+  
+  <aop:aspect id="afterThrowingExample" ref="aBean">
+  
+      <aop:after-throwing
+          pointcut-ref="dataAccessOperation"
+          throwing="ex"
+          method="doRecoveryActions"/>
+  
+      ...
+  
+  </aop:aspect>
+  ```
+
 - `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
 
 - `around advice`: 围绕`JoinPoint`的`Advice`。这是最有力的`Advice`。`around advice`可以在方法调用之前和之后执行自定义行为。**建议使用下面的特定类型的`Advice`,在必要情况下 在使用 `around advice` 因为做同样的事使用最具体的 `Advice`类型可以提供最简单的编程模型，减少错误出现的可能性**
@@ -356,4 +384,6 @@ execution(* com.xyz.service..*.*(..))
 许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点**周围**维护一系列拦截器。 
 
 ### 6.3.2 注解的方式
+
+和xml 方式相识，spring 中存在相对应的注解，使用方式都差不多
 
