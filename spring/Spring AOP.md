@@ -287,7 +287,7 @@ execution(* com.xyz.service..*.*(..))
 
 ### 6.3.1 xml
 
-和第三节介绍的一样，`Advice`有5种类型
+和第三节介绍的一样，`Advice`的5种类型下面都会有
 
 - `before advice`: 在`JoinPoint`之前执行但不能阻止执行流程进入`JoinPoint`的`Advice`（除非它(`Advice`)抛出异常）。 
 
@@ -379,11 +379,189 @@ execution(* com.xyz.service..*.*(..))
 
 - `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
 
-- `around advice`: 围绕`JoinPoint`的`Advice`。这是最有力的`Advice`。`around advice`可以在方法调用之前和之后执行自定义行为。**建议使用下面的特定类型的`Advice`,在必要情况下 在使用 `around advice` 因为做同样的事使用最具体的 `Advice`类型可以提供最简单的编程模型，减少错误出现的可能性**
+- `around advice`: 围绕`JoinPoint`的`Advice`。这是最有力的`Advice`。`around advice`可以在方法调用之前和之后执行自定义行为。
 
-许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点**周围**维护一系列拦截器。 
+  ```xml
+  <aop:aspect id="aroundExample" ref="aBean">
+  
+      <aop:around
+          pointcut-ref="businessService"
+          method="doBasicProfiling"/>
+  
+      ...
+  
+  </aop:aspect>
+  ```
+
+  `doBasicProfiling`  方法的实现：
+
+  ```java
+  public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
+     // 在连接点前 做点什么
+      Object retVal = pjp.proceed();// 这里相当于调用 我们实际的方法（连接点）
+     // 在连接点后 做点什么
+      return retVal;
+  }
+  ```
+
+  **上面方法 抛出的 throws Throwable 异常 也可以在方法内部处理掉**
+
+  这个已经很类似 我们使用动态代理时候的代码
+
+  我们看一下 动态代理的代码：
+
+  *  cglib
+
+    ```java
+    public class CglibProxy implements MethodInterceptor {
+    
+       private Enhancer enhancer = new Enhancer();
+       
+       public Object getProxy(Class clazz){
+          //设置创建子类的类
+          enhancer.setSuperclass(clazz);
+          enhancer.setCallback(this);
+          
+          return enhancer.create();
+       }
+       
+       /**
+        * 拦截所有目标类方法的调用
+        * obj  目标类的实例
+        * m   目标方法的反射对象
+        * args  方法的参数
+        * proxy代理类的实例
+        */
+       @Override
+       public Object intercept(Object obj, Method m, Object[] args,
+             MethodProxy proxy) throws Throwable {
+          System.out.println("日志开始...");
+          //代理类调用父类的方法
+          proxy.invokeSuper(obj, args);
+          System.out.println("日志结束...");
+          return obj;
+       }
+    
+    }
+    ```
+
+    
+
+  * jdk 动态代理
+
+    ```java
+    public class TimeHandler implements InvocationHandler {
+    
+    	public TimeHandler(Object target) {
+    		super();
+    		this.target = target;
+    	}
+    
+    	private Object target;
+    	
+    	@Override
+    	public Object invoke(Object proxy, Method method, Object[] args)
+    			throws Throwable {
+    		long starttime = System.currentTimeMillis();
+    		System.out.println("汽车开始行驶....");
+    		method.invoke(target);
+    		long endtime = System.currentTimeMillis();
+    		System.out.println("汽车结束行驶....  汽车行驶时间："
+    				+ (endtime - starttime) + "毫秒！");
+    		return null;
+    	}
+    }
+    
+    ```
+
+    **有没有发现这个最能够体现 我们AOP 的实现使用的是动态代理**
+
+- `Advice parameters` :  如果您希望显式指定通知方法的参数名称（不依赖于前面描述的检测策略），那么这是使用`arg-names`属性完成的 
+
+  
+
+  
+
+- 一种特殊的用法
+
+  ```java
+  package x.y.service;
+  
+  public interface FooService {
+  
+      Foo getFoo(String fooName, int age);
+  }
+  
+  public class DefaultFooService implements FooService {
+  
+      public Foo getFoo(String name, int age) {
+          return new Foo(name, age);
+      }
+  }
+  ```
+
+  上面的接口不是必须的，但是在接口编程中是推荐使用的
+
+  接下来是方面。请注意，该`profile(..)`方法接受许多强类型参数，第一个参数恰好是用于继续方法调用的连接点：此参数的存在表明该参数 `profile(..)`将用作`around`建议： 
+
+  ```java
+  import org.aspectj.lang.ProceedingJoinPoint;
+  import org.springframework.util.StopWatch;
+  
+  public class SimpleProfiler {
+  
+      public Object profile(ProceedingJoinPoint call, String name, int age) throws Throwable {
+          StopWatch clock = new StopWatch("Profiling for '" + name + "' and '" + age + "'");
+          try {
+              clock.start(call.toShortString());
+              return call.proceed();
+          } finally {
+              clock.stop();
+              System.out.println(clock.prettyPrint());
+          }
+      }
+  }
+  ```
+
+  最后，这是为特定连接点执行上述建议所需的XML配置：  
+
+  ```xml
+  <beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:aop="http://www.springframework.org/schema/aop"
+      xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+  
+      <!-- this is the object that will be proxied by Spring's AOP infrastructure -->
+      <bean id="fooService" class="x.y.service.DefaultFooService"/>
+  
+      <!-- this is the actual advice itself -->
+      <bean id="profiler" class="x.y.SimpleProfiler"/>
+  
+      <aop:config>
+          <aop:aspect ref="profiler">
+  
+              <aop:pointcut id="theExecutionOfSomeFooServiceMethod"
+                  expression="execution(* x.y.service.FooService.getFoo(String,int))
+                  and args(name, age)"/>
+  
+              <aop:around pointcut-ref="theExecutionOfSomeFooServiceMethod"
+                  method="profile"/>
+  
+          </aop:aspect>
+      </aop:config>
+  
+  </beans>
+  ```
 
 ### 6.3.2 注解的方式
 
 和xml 方式相识，spring 中存在相对应的注解，使用方式都差不多
+
+## 6.4  Introduction 
+
+### 6.4.1 xml
+
+### 6.4.2 注解的方式
 
