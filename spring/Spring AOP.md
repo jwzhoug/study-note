@@ -189,6 +189,12 @@ execution(* com.xyz.service..*.*(..))
 
 * `@args` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
+  * 它接受一个参数，并且传递的参数的运行时类型具有`@Classified`注释：
+
+  ```
+  @args(com.xyz.security.Classified)
+  ```
+
 #### 目标类匹配
 
 * `target` ：**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
@@ -200,7 +206,7 @@ execution(* com.xyz.service..*.*(..))
 
 * `@target` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
 
-  - 目标对象具有`@Transactional`注释的任何连接点：
+  - **目标对象**具有`@Transactional`注释的任何连接点：
 
   ```java
   @target(org.springframework.transaction.annotation.Transactional)
@@ -222,23 +228,11 @@ execution(* com.xyz.service..*.*(..))
 
 * `@within` :**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-  - 任何连接点（仅在Spring AOP中执行方法），其中目标对象的声明类型具有`@Transactional`注释：
+  - **目标对象**具有`@Transactional`注释的任何连接点：：
 
   ```java
   @within(org.springframework.transaction.annotation.Transactional)
   ```
-
-```
-@within(org.springframework.transaction.annotation.Transactional)
-```
-
-```
-@within(org.springframework.transaction.annotation.Transactional)
-```
-
-```
-@within(org.springframework.transaction.annotation.Transactional)
-```
 
 #### 当前AOP代理对象类型匹配
 
@@ -254,11 +248,23 @@ execution(* com.xyz.service..*.*(..))
 
 * `@annotation` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
+  - 其中**执行方法**具有 `@Transactional`注释的任何连接点：
+
+  ```
+  @annotation(org.springframework.transaction.annotation.Transactional)
+  ```
+
 #### 特定的命名Spring bean 
 
 * 匹配特定的bean, 通过id 或 name
 
-```java
-bean(id or Name)
-```
+  ```java 
+  bean(id or Name)
+  ```
+
+* 具有与通配符表达式匹配的名称的Spring bean
+
+  ```
+  bean(*name or *id)
+  ```
 
