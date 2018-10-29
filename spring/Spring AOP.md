@@ -125,100 +125,104 @@
 
 **在多个表达式之间可以使用 ||,or 表示 或，使用 &&,and表示 与，使用 ！表示 非** 
 
-* 方法描述匹配
-  * `execution`:   **使用频率最高指示符**，执行表达式的格式是 ：
+#### 方法描述匹配
+
+* `execution`:   **使用频率最高指示符**，执行表达式的格式是 ：
+
+```java
+execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-pattern(param-pattern)throws-pattern? )
+```
+
+从正则表达式中我们可以看出 `ret-type-pattern` ， `name-pattern` ，`param-pattern` 是必须的
+
+`ret-type-pattern`:标识方法的返回值，需要使用全路径的类名如java.lang.String,也可以为*表示任何返回值； 　　　　
+
+`name-pattern`:指定方法名, *  代表所有方法 ,  set* , 代表以set开头的所有方法. 　　　　
+
+`param-pattern`:指定方法参数(声明的类型),(..)代表所有参数,(*)代表一个参数, ( * , String) 代表第一个参数为任何值,第二个为String类型. 
+
+`modifiers-pattern`: 描述访问控制符 比如 `public`.....
+
+`throws-pattern`: 描述抛出什么样的异常
+
+ 表达式例子如下： 
+
+- 执行任何公共方法：
+
+```java
+execution(public * *(..))
+```
+
+- 名称以“set”开头的任何方法的执行：
+
+```java
+execution(* set*(..))
+```
+
+- 执行`AccountService`接口定义的任何方法：
+
+```java
+execution(* com.xyz.service.AccountService.*(..))
+```
+
+- 执行service包中定义的任何类的任何方法：
+
+```java
+execution(* com.xyz.service.*.*(..))
+```
+
+- 执行service包或子包中定义的任何方法：
+
+```java
+execution(* com.xyz.service..*.*(..))
+```
+
+#### 方法参数描述匹配
+
+* `args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `@args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+#### 目标类匹配
+
+* `target` ： （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+* `@target` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+* `within`: （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+  * 服务包中的任何连接点：
 
   ```java
-  execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-pattern(param-pattern)throws-pattern? )
+  within(com.xyz.service.*)
   ```
 
-  从正则表达式中我们可以看出 `ret-type-pattern` ， `name-pattern` ，`param-pattern` 是必须的
-
-  `ret-type-pattern`:标识方法的返回值，需要使用全路径的类名如java.lang.String,也可以为*表示任何返回值； 　　　　
-
-  `name-pattern`:指定方法名, *  代表所有方法 ,  set* , 代表以set开头的所有方法. 　　　　
-
-  `param-pattern`:指定方法参数(声明的类型),(..)代表所有参数,(*)代表一个参数, ( * , String) 代表第一个参数为任何值,第二个为String类型. 
-
-  `modifiers-pattern`: 描述访问控制符 比如 `public`.....
-
-  `throws-pattern`: 描述抛出什么样的异常
-
-   表达式例子如下： 
-
-  - 执行任何公共方法：
+  - 服务包或子包中的任何连接点：	
 
   ```java
-  execution(public * *(..))
+  within(com.xyz.service..*)
   ```
 
-  - 名称以“set”开头的任何方法的执行：
+* `@within` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+#### 当前AOP代理对象类型匹配
+
+* `this`:  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+  代理实现`AccountService`接口的任何连接点
 
   ```java
-  execution(* set*(..))
+  this(com.xyz.service.AccountService)
   ```
 
-  - 执行`AccountService`接口定义的任何方法：
+#### 标有...注解的方法匹配 
 
-  ```java
-  execution(* com.xyz.service.AccountService.*(..))
-  ```
+* `@annotation` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-  - 执行service包中定义的任何类的任何方法：
+#### 特定的命名Spring bean 
 
-  ```java
-  execution(* com.xyz.service.*.*(..))
-  ```
+* 匹配特定的bean, 通过id 或 name
 
-  - 执行service包或子包中定义的任何方法：
-
-  ```java
-  execution(* com.xyz.service..*.*(..))
-  ```
-
-* 方法参数描述匹配
-  * `args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-  * `@args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-* 目标类匹配
-  * `target` ： （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-  * `@target` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-  * `within`: （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-    * 服务包中的任何连接点：
-
-    ```java
-    within(com.xyz.service.*)
-    ```
-
-    - 服务包或子包中的任何连接点：	
-
-    ```java
-    within(com.xyz.service..*)
-    ```
-
-  * `@within` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-* 当前AOP代理对象类型匹配
-
-  * `this`:  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-    代理实现`AccountService`接口的任何连接点
-
-    ```java
-    this(com.xyz.service.AccountService)
-    ```
-
-* 标有...注解的方法匹配 
-  * `@annotation` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-* Spring AOP还支持另一个名为的PCD `bean` ，连接点的匹配限制为特定的命名Spring bean 
-
-  * 匹配特定的bean, 通过id 或 name
-
-  ```java
-  bean(id or Name)
-  ```
+```java
+bean(id or Name)
+```
 
