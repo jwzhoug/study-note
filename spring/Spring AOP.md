@@ -179,14 +179,21 @@ execution(* com.xyz.service..*.*(..))
 
 #### 方法参数描述匹配
 
-* `args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-* `@args` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `args` : **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `@args` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
 #### 目标类匹配
 
-* `target` ： （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `target` ：**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
 
-* `@target` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+  * 目标对象实现AccountService接口的任何连接点
+  ```java
+    target(com.xyz.service.AccountService)
+  ```
+
+* `@target` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
+
+  
 
 * `within`: （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
@@ -202,13 +209,15 @@ execution(* com.xyz.service..*.*(..))
   within(com.xyz.service..*)
   ```
 
-* `@within` :（仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `@within` :**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+
+  
 
 #### 当前AOP代理对象类型匹配
 
-* `this`:  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `this`:  **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-  代理实现`AccountService`接口的任何连接点
+  * 代理实现`AccountService`接口的任何连接点
 
   ```java
   this(com.xyz.service.AccountService)
@@ -216,7 +225,7 @@ execution(* com.xyz.service..*.*(..))
 
 #### 标有...注解的方法匹配 
 
-* `@annotation` : （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* `@annotation` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
 #### 特定的命名Spring bean 
 
