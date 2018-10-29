@@ -73,6 +73,8 @@
 
 `advisor` :  能够将`Advice`以更为复杂的方式织入到目标对象中，是将`Advice`包装为更复杂切面的装配器。
 
+**下面的内容按照章节顺序讲解配置其实是这样一个过程：先配置一个切面`Aspect`，切面中包含了切入点`PointCut`，切入点中采用不同的表达式筛选出了对应的连接点`JoinPoint`，接下来就是定义这些`JoinPoint`,需要执行的 处理逻辑`Advice`,**
+
 ## 6.1 Aspect
 
 ### 6.1.1 xml 方式
@@ -120,6 +122,19 @@
 
 </aop:config>
 ```
+
+`expression `属性中的表达式请参考 6.2.3 
+
+### 6.2.2 @Pointcut 方式
+
+```java
+@Pointcut("execution(* transfer(..))")
+private void anyOldTransfer() {...}
+```
+
+注解中使用的 表达式 参考 6.2.3 
+
+### 6.2.3 expression的指示符类型
 
 **expression的指示符有很多类型**：详情参考[支持的切入点指示符](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-pointcuts-designators),[常见切入点表达式 ](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-pointcuts-examples)
 
@@ -267,4 +282,78 @@ execution(* com.xyz.service..*.*(..))
   ```
   bean(*name or *id)
   ```
+
+## 6.3 Advice
+
+### 6.3.1 xml
+
+和第三节介绍的一样，`Advice`有5种类型
+
+- `before advice`: 在`JoinPoint`之前执行但不能阻止执行流程进入`JoinPoint`的`Advice`（除非它(`Advice`)抛出异常）。 
+
+  ```xml
+  <aop:aspect id="beforeExample" ref="aBean">
+  
+      <aop:before
+          pointcut-ref="dataAccessOperation"
+          method="doAccessCheck"/>
+  
+      ...
+  
+  </aop:aspect>
+  ```
+
+  `pointcut-ref ` 指向的是 定义的`pointcut` 的 `id`。还可以使用 内联的方式定义
+
+  ```xml
+  <aop:aspect id="beforeExample" ref="aBean">
+  
+      <aop:before
+          pointcut="execution(* com.xyz.myapp.dao.*.*(..))"
+          method="doAccessCheck"/>
+      ...
+  
+  </aop:aspect>
+  ```
+
+  `method` 指定的方法是 `<aop:aspect id="beforeExample" ref="aBean">` 中`ref`指定的bean中定义的方法
+
+- `after returning advice`: 在`JionPoint`正常完成后执行的*建议`Advice`
+
+  ```xml
+  <aop:aspect id="afterReturningExample" ref="aBean">
+  
+      <aop:after-returning
+          pointcut-ref="dataAccessOperation"
+          method="doAccessCheck"/>
+  
+      ...
+  
+  </aop:aspect>
+  ```
+
+  method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://www.cnblogs.com/ssslinppp/p/4633496.html
+
+  ```xml
+  <aop:aspect id="afterReturningExample" ref="aBean">
+  
+      <aop:after-returning
+          pointcut-ref="dataAccessOperation"
+          returning="retVal"
+          method="doAccessCheck"/>
+  
+      ...
+  
+  </aop:aspect>
+  ```
+
+- `after throwing advice`: 如果方法是抛出异常退出，则执行 `Advice`
+
+- `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
+
+- `around advice`: 围绕`JoinPoint`的`Advice`。这是最有力的`Advice`。`around advice`可以在方法调用之前和之后执行自定义行为。**建议使用下面的特定类型的`Advice`,在必要情况下 在使用 `around advice` 因为做同样的事使用最具体的 `Advice`类型可以提供最简单的编程模型，减少错误出现的可能性**
+
+许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点**周围**维护一系列拦截器。 
+
+### 6.3.2 注解的方式
 
