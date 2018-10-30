@@ -514,9 +514,7 @@ public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
 
   **有没有发现这个最能够体现 我们AOP 的实现使用的是动态代理**
 
-#### `Advice parameters` 
-
-arg-names 参考下文中 6.3.2 注解的 argNames 的作用
+#### `Advice parameters`
 
 ```java
 package x.y.service;
@@ -534,7 +532,7 @@ public class DefaultFooService implements FooService {
 }
 ```
 
-上面的接口不是必须的，但是在接口编程中是推荐使用的
+**上面的接口不是必须的，但是在接口编程中是推荐使用的**
 
 接下来是方面。请注意，该`profile(..)`方法接受许多强类型参数，第一个参数恰好是用于继续方法调用的连接点：此参数的存在表明该参数 `profile(..)`将用作`around`建议： 
 
@@ -588,6 +586,10 @@ public class SimpleProfiler {
 
 </beans>
 ```
+**arg-names 参考下文中 6.3.2 注解的 argNames 的用法**
+
+
+
 ### 6.3.2 注解的方式
 
 和xml 方式相识，spring 中也存在相对应的注解，使用方式都差不多
@@ -932,18 +934,18 @@ public class MyAspect {
 
 首先`args(m1,m2)`=>`m1 = ' hello' , m2 = ' world' `；
 
-然后 `argNames = "m2,m1"` 这个说的是把值按照 m2,m1 的顺序 传给 `sayHello(String m1,String m2)` 方法，相当于 `sayHello("world","hello")` 那么结果就是
+然后 `argNames = "m2,m1"` （**这种方式不推荐**）这个说的是把值按照 m2,m1 的顺序 传给 `sayHello(String m1,String m2)` 方法，相当于 `sayHello("world","hello")` 那么结果就是 
 
 ```
 hello  world  hello 
  猴子 上树  hello  world 
 ```
 
-如果  `argNames = "m1,m2"`=>`sayHello("hello","world")`
+如果  `argNames = "m1,m2"`=>`sayHello("hello","world")` **推荐这种方式 按照参数正常顺序的使用，因为如果 m1 , m2 类型不同，那就一定要按照 方法参数的顺序来写，不然这个advice将得不到执行**
 
 **表达式中的内容是 advice方法的两个参数，一定要和匹配的连接点法方法参数名相同**
 
-
+更多详细的请看官网的 https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-ataspectj-advice-params
 
 ## 6.4  Introduction 
 
