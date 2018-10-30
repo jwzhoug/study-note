@@ -638,7 +638,11 @@ execution(* com.xyz.service..*.*(..))
 
   如果你写成 `argNames = " message2,message"` 由于这时候 **`args(message,message2)`** => `message = ' hello' , message2 = ' world'` 。那么传给` sayHello(String message,String message2`） 方法的就是 ` message = ' world' , message2 = ' hello'`
 
-* ` @AfterReturning` : 基本使用方法和上面的一样，不过如果要使用他的 returning 属性 这个和xml配置的方式类似，这里我也给出一个例子吧
+* ` @AfterReturning` : argNames 使用方法都一样；这里我也给出一个使用 returning 属性的例子
+
+  **returnning 中指定的名称和方法的参数名称要对应**
+
+  Advice
 
   ```java
   public class MyAspect {
@@ -652,6 +656,8 @@ execution(* com.xyz.service..*.*(..))
       }
   }
   ```
+
+  目标对象
 
   ```java
   @Component
@@ -682,7 +688,55 @@ execution(* com.xyz.service..*.*(..))
   }
   ```
 
-* 
+* `@AfterThrowing`: argNames 使用方法都一样；这里我也给出一个使用 throwing 属性的例子
+
+  **throwing 中指定的名称和方法的参数名称要对应**
+
+  Advice
+
+  ```java
+  @Component
+  @Aspect
+  public class MyAspect {
+  
+      @AfterThrowing(pointcut = "execution(* com.stu.springdemo.aop.annotation." +
+              "testPo.Monkey.throwException())",throwing = "runtimeException")
+      public void exception(RuntimeException runtimeException){
+          System.out.println(" exception : "+runtimeException.getMessage());
+      }
+  }
+  ```
+
+  目标对象
+
+  ```java
+  @Component
+  public class Monkey {
+  
+   		public void throwException() {
+          System.out.println(" throwExepction ");
+          throw new RuntimeException(" 抛出了一个异常 ");
+      }
+  
+  }
+  ```
+
+  测试方法
+
+  ```java
+  public class AopByAnnotationTest extends UnitTestBase {
+  
+      public AopByAnnotationTest() {
+          super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+      }
+  
+      @Test
+      public void testAfterThrowing() {
+          Monkey monkey = getBean("monkey");
+          monkey.throwException();
+      }
+  }
+  ```
 
 ## 6.4  Introduction 
 
