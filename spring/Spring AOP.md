@@ -1031,11 +1031,80 @@ public void testBeforeAnnotation() {
 
 使用`aop:declare-parents`用于声明匹配类型具有新父级 
 
-`types-matching `: 描述匹配的类型，上面的 +号表示包括子类，比如` com.xzy.myapp.service.MyService+`
+`types-matching `: 描述匹配的类型，上面的 +号表示包括子类，
 
-匹配 MyService 以及 MyService 的子类 
+比如` com.xzy.myapp.service.MyService+`匹配 MyService 以及 MyService 的子类 
 
 ### 6.4.2 注解的方式
+
+aspect
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+
+    @DeclareParents(value="com.stu.springdemo.aop.annotation.testPo.Monkey", 		defaultImpl=Elephant.class)
+    public static Animal animal;
+  
+}
+```
+
+目标类
+
+```java
+@Component
+public class Monkey {
+		
+		public void process() {
+        System.out.println(" process ");
+    }
+}
+```
+
+
+
+接口 
+
+```java
+public interface Animal {
+    void run();
+}
+```
+
+实现类
+
+```java
+@Component
+public class Elephant implements Animal {
+
+    @Override
+    public void run() {
+        System.out.println(" 大象 走路 ");
+    }
+}
+```
+
+测试类
+
+```java
+public class AopByAnnotationTest extends UnitTestBase {
+
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
+    
+    @Test
+    public void testIntroduction() {
+        Monkey monkey = getBean("monkey");
+        monkey.process();
+        Animal elephant = (Animal) monkey;// 强转
+        System.out.println("-----------------");
+        elephant.run();// 执行
+    }
+
+}
+```
 
 ## 6.5 advisor
 
