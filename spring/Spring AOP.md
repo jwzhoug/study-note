@@ -93,6 +93,10 @@
 
 ### 6.1.2 @Aspect 方式
 
+修饰在类上，注意这个累同时需要用到`@Component` 以及其他定义Spring bean 的注解，详情查看[spring 注解驱动](https://github.com/Alan-Jun/study-note/blob/master/spring/Spring%20Annotation%20Driver.md)
+
+
+
 ## 6.2 PointCut
 
 ### 6.2.1 xml 方式
