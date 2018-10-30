@@ -180,9 +180,9 @@ public void validateAccount(Account account) {
 
 **在多个表达式之间可以使用 ||,or 表示 或，使用 &&,and表示 与，使用 ！表示 非** 
 
-#### 方法描述匹配
+#### `execution`:
 
-* `execution`:   **使用频率最高指示符**，执行表达式的格式是 ：
+  **使用频率最高指示符，匹配粒度——方法**，执行表达式的格式是 ：
 
 ```java
 execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-pattern(param-pattern)throws-pattern? )
@@ -232,84 +232,94 @@ execution(* com.xyz.service.*.*(..))
 execution(* com.xyz.service..*.*(..))
 ```
 
-#### 方法参数描述匹配
+#### `args` 
 
-* `args` : **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+ **更常用于绑定形式，匹配粒度——方法参数** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-  * 任何连接点，它接受一个参数，并且在运行时传递的参数是`Serializable` 
+* 任何连接点，它接受一个参数，并且在运行时传递的参数是`Serializable` 
 
-  ```
-  args(java.io.Serializable)
-  ```
+```java
+args(java.io.Serializable)
+```
+* 可以使用通配符，但这里通配符只能使用..，而不能使用*。如下是使用通配符的实例，该切点表达式将匹配第一个参数为`java.lang.String`，最后一个参数为`java.lang.Integer`，并且中间可以有任意个数和类型参数的方法： 
 
-* `@args` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+```java
+args(java.lang.String,..,java.lang.Integer)
+```
 
-  * 它接受一个参数，并且传递的参数的运行时类型具有`@Classified`注释：
+#### `@args` :
 
-  ```
-  @args(com.xyz.security.Classified)
-  ```
+**使用指定注解标注的类作为某个方法的参数时该方法将会被匹配。** 
 
-#### 目标类匹配
+**也可以用于绑定形式 匹配粒度——方法参数**** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-* `target` ：**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
+* 它接受一个参数，并且传递的参数的运行时类型具有`@Classified`注释：
 
-  * 目标对象实现AccountService接口的任何连接点：
-  ```java
-    target(com.xyz.service.AccountService)
-  ```
+```
+@args(com.xyz.security.Classified)
+```
+#### `target` 
 
-* `@target` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
+**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
 
-  - **目标对象**具有`@Transactional`注释的任何连接点：
+* 目标对象实现AccountService接口的任何连接点：
+```java
+  target(com.xyz.service.AccountService)
+```
+#### `@target` 
 
-  ```java
-  @target(org.springframework.transaction.annotation.Transactional)
-  ```
+ **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
 
-* `within`: （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+- **目标对象**具有`@Transactional`注释的任何连接点：
 
-  * 服务包中的任何连接点：
+```java
+@target(org.springframework.transaction.annotation.Transactional)
+```
 
-  ```java
-  within(com.xyz.service.*)
-  ```
+#### `within`
 
-  - 服务包或子包中的任何连接点：	
+  within表达式的粒度为类，其参数为全路径的类名（可使用通配符）。 （仅在 Spring AOP 这样使用 ，如果在   	 AspectJ 这里就不能这样用了） 
 
-  ```java
-  within(com.xyz.service..*)
-  ```
+* 服务包中的任何连接点：
 
-* `@within` :**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+```java
+within(com.xyz.service.*)
+```
 
-  - **目标对象**具有`@Transactional`注释的任何连接点：：
+- 服务包或子包中的任何连接点：	
 
-  ```java
-  @within(org.springframework.transaction.annotation.Transactional)
-  ```
+```java
+within(com.xyz.service..*)
+```
 
-#### 当前AOP代理对象类型匹配
+#### `@within` 
 
-* `this`:  **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-  * 代理实现`AccountService`接口的任何连接点
+- **目标对象**具有`@Transactional`注释的任何连接点：：
 
-  ```java
-  this(com.xyz.service.AccountService)
-  ```
+```java
+@within(org.springframework.transaction.annotation.Transactional)
+```
+#### `this`
 
-#### 标有...注解的方法匹配 
+  **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-* `@annotation` : **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+* 代理实现`AccountService`接口的任何连接点
 
-  - 其中**执行方法**具有 `@Transactional`注释的任何连接点：
+```java
+this(com.xyz.service.AccountService)
+```
+#### `@annotation` 
 
-  ```
-  @annotation(org.springframework.transaction.annotation.Transactional)
-  ```
+**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
 
-#### 特定的命名Spring bean 
+- 其中**执行方法**具有 `@Transactional`注释的任何连接点：
+
+```
+@annotation(org.springframework.transaction.annotation.Transactional)
+```
+#### bean 
 
 * 匹配特定的bean, 通过id 或 name
 
