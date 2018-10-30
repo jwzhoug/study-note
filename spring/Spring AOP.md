@@ -41,7 +41,7 @@
   * `after throwing advice`: 如果方法是抛出异常退出，则执行 `Advice`
   * `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
 
-  许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点**周围**维护一系列拦截器。 
+  **许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点周围维护一系列拦截器。** 
 
 * 切入点（`PointCut`）: 匹配连接点的断言，`Advice`与`PointCut`表达式相关联，并在`PointCut`匹配的任何`JoinPoint`处运行，**也就是说 `Pointcut`是`JoinPoint`的集合，它是程序中需要注入`Advice` 的位置的集合，指明`Advice`要在什么样的条件下才能被触发。`org.springframework.aop.Pointcut `接口用来指定到特定的类和方法。**
 
@@ -586,4 +586,10 @@ execution(* com.xyz.service..*.*(..))
 匹配 MyService 以及 MyService 的子类 
 
 ### 6.4.2 注解的方式
+
+## 6.5 advisor
+
+# 6.6 spring AOP API
+
+这事Spring AOP 的基础。https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-api  有需要的时候请仔细阅读 官文的这部分内容
 
