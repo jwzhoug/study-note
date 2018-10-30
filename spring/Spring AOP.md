@@ -319,430 +319,628 @@ execution(* com.xyz.service..*.*(..))
 
 和第三节介绍的一样，`Advice`的5种类型下面都会有
 
-- `before advice`: 在`JoinPoint`之前执行但不能阻止执行流程进入`JoinPoint`的`Advice`（除非它(`Advice`)抛出异常）。 
+#### `before advice`:
 
-  ```xml
-  <aop:aspect id="beforeExample" ref="aBean">
-  
-      <aop:before
-          pointcut-ref="dataAccessOperation"
-          method="doAccessCheck"/>
-  
-      ...
-  
-  </aop:aspect>
-  ```
+ 在`JoinPoint`之前执行但不能阻止执行流程进入`JoinPoint`的`Advice`（除非它(`Advice`)抛出异常）。 
 
-  `pointcut-ref ` 指向的是 定义的`pointcut` 的 `id`。还可以使用 内联的方式定义
+```xml
+<aop:aspect id="beforeExample" ref="aBean">
 
-  ```xml
-  <aop:aspect id="beforeExample" ref="aBean">
-  
-      <aop:before
-          pointcut="execution(* com.xyz.myapp.dao.*.*(..))"
-          method="doAccessCheck"/>
-      ...
-  
-  </aop:aspect>
-  ```
+    <aop:before
+        pointcut-ref="dataAccessOperation"
+        method="doAccessCheck"/>
 
-  `method` 指定的方法是 `<aop:aspect id="beforeExample" ref="aBean">` 中`ref`指定的bean中定义的方法
+    ...
 
-- `after returning advice`: 在`JionPoint`正常完成后执行的建议`Advice`
+</aop:aspect>
+```
 
-  ```xml
-  <aop:aspect id="afterReturningExample" ref="aBean">
-  
-      <aop:after-returning
-          pointcut-ref="dataAccessOperation"
-          method="doAccessCheck"/>
-  
-      ...
-  
-  </aop:aspect>
-  ```
+`pointcut-ref ` 指向的是 定义的`pointcut` 的 `id`。还可以使用 内联的方式定义
 
-  method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://www.cnblogs.com/ssslinppp/p/4633496.html
+```xml
+<aop:aspect id="beforeExample" ref="aBean">
 
-  ```xml
-  <aop:aspect id="afterReturningExample" ref="aBean">
-  
-      <aop:after-returning
-          pointcut-ref="dataAccessOperation"
-          returning="retVal"
-          method="doAccessCheck"/>
-  
-      ...
-  
-  </aop:aspect>
-  ```
+    <aop:before
+        pointcut="execution(* com.xyz.myapp.dao.*.*(..))"
+        method="doAccessCheck"/>
+    ...
 
-- `after throwing advice`: 如果方法是抛出异常退出，则执行 `Advice`
+</aop:aspect>
+```
 
-  ```xml
-  <aop:aspect id="afterThrowingExample" ref="aBean">
-  
-      <aop:after-throwing
-          pointcut-ref="dataAccessOperation"
-          method="doRecoveryActions"/>
-  
-      ...
-  
-  </aop:aspect>
-  ```
+`method` 指定的方法是 `<aop:aspect id="beforeExample" ref="aBean">` 中`ref`指定的bean中定义的方法
 
-  method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://blog.csdn.net/owen_william/article/details/50812780
+#### `after returning advice`:
 
-  ```xml
-  
-  <aop:aspect id="afterThrowingExample" ref="aBean">
-  
-      <aop:after-throwing
-          pointcut-ref="dataAccessOperation"
-          throwing="ex"
-          method="doRecoveryActions"/>
-  
-      ...
-  
-  </aop:aspect>
-  ```
+ 在`JionPoint`正常完成后执行的建议`Advice`
 
-- `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
+```xml
+<aop:aspect id="afterReturningExample" ref="aBean">
 
-- `around advice`: 围绕`JoinPoint`的`Advice`。这是最有力的`Advice`。`around advice`可以在方法调用之前和之后执行自定义行为。
+    <aop:after-returning
+        pointcut-ref="dataAccessOperation"
+        method="doAccessCheck"/>
 
-  ```xml
-  <aop:aspect id="aroundExample" ref="aBean">
-  
-      <aop:around
-          pointcut-ref="businessService"
-          method="doBasicProfiling"/>
-  
-      ...
-  
-  </aop:aspect>
-  ```
+    ...
 
-  `doBasicProfiling`  方法的实现：
+</aop:aspect>
+```
+
+method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://www.cnblogs.com/ssslinppp/p/4633496.html
+
+```xml
+<aop:aspect id="afterReturningExample" ref="aBean">
+
+    <aop:after-returning
+        pointcut-ref="dataAccessOperation"
+        returning="retVal"
+        method="doAccessCheck"/>
+
+    ...
+
+</aop:aspect>
+```
+#### `after throwing advice`
+
+如果方法是抛出异常退出，则执行 `Advice`
+
+```xml
+<aop:aspect id="afterThrowingExample" ref="aBean">
+
+    <aop:after-throwing
+        pointcut-ref="dataAccessOperation"
+        method="doRecoveryActions"/>
+
+    ...
+
+</aop:aspect>
+```
+
+method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://blog.csdn.net/owen_william/article/details/50812780
+
+```xml
+
+<aop:aspect id="afterThrowingExample" ref="aBean">
+
+    <aop:after-throwing
+        pointcut-ref="dataAccessOperation"
+        throwing="ex"
+        method="doRecoveryActions"/>
+
+    ...
+
+</aop:aspect>
+```
+#### `after (finally) advice`: 
+
+无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
+
+#### `around advice`:
+
+ 围绕`JoinPoint`的`Advice`。这是最有力的`Advice`。`around advice`可以在方法调用之前和之后执行自定义行为。
+
+```xml
+<aop:aspect id="aroundExample" ref="aBean">
+
+    <aop:around
+        pointcut-ref="businessService"
+        method="doBasicProfiling"/>
+
+    ...
+
+</aop:aspect>
+```
+
+`doBasicProfiling`  方法的实现：
+
+```java
+public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
+   // 在连接点前 做点什么
+    Object retVal = pjp.proceed();// 这里相当于调用 我们实际的方法（连接点）
+   // 在连接点后 做点什么
+    return retVal;
+}
+```
+
+**上面方法 抛出的 throws Throwable 异常 也可以在方法内部处理掉**
+
+这个已经很类似 我们使用动态代理时候的代码
+
+我们看一下 动态代理的代码：
+
+*  cglib
+
+```java
+  public class CglibProxy implements MethodInterceptor {
+  
+     private Enhancer enhancer = new Enhancer();
+     
+     public Object getProxy(Class clazz){
+        //设置创建子类的类
+        enhancer.setSuperclass(clazz);
+        enhancer.setCallback(this);
+        
+        return enhancer.create();
+     }
+     
+     /**
+      * 拦截所有目标类方法的调用
+      * obj  目标类的实例
+      * m   目标方法的反射对象
+      * args  方法的参数
+      * proxy代理类的实例
+      */
+     @Override
+     public Object intercept(Object obj, Method m, Object[] args,
+           MethodProxy proxy) throws Throwable {
+        System.out.println("日志开始...");
+        //代理类调用父类的方法
+        proxy.invokeSuper(obj, args);
+        System.out.println("日志结束...");
+        return obj;
+     }
+  
+  }
+```
+
+  
+
+* jdk 动态代理
 
   ```java
-  public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
-     // 在连接点前 做点什么
-      Object retVal = pjp.proceed();// 这里相当于调用 我们实际的方法（连接点）
-     // 在连接点后 做点什么
-      return retVal;
+  public class TimeHandler implements InvocationHandler {
+  
+  	public TimeHandler(Object target) {
+  		super();
+  		this.target = target;
+  	}
+  
+  	private Object target;
+  	
+  	@Override
+  	public Object invoke(Object proxy, Method method, Object[] args)
+  			throws Throwable {
+  		long starttime = System.currentTimeMillis();
+  		System.out.println("汽车开始行驶....");
+  		method.invoke(target);
+  		long endtime = System.currentTimeMillis();
+  		System.out.println("汽车结束行驶....  汽车行驶时间："
+  				+ (endtime - starttime) + "毫秒！");
+  		return null;
+  	}
   }
+  
   ```
 
-  **上面方法 抛出的 throws Throwable 异常 也可以在方法内部处理掉**
+  **有没有发现这个最能够体现 我们AOP 的实现使用的是动态代理**
 
-  这个已经很类似 我们使用动态代理时候的代码
+#### `Advice parameters` 
 
-  我们看一下 动态代理的代码：
+arg-names 参考下文中 6.3.2 注解的 argNames 的作用
 
-  *  cglib
+```java
+package x.y.service;
 
-    ```java
-    public class CglibProxy implements MethodInterceptor {
-    
-       private Enhancer enhancer = new Enhancer();
-       
-       public Object getProxy(Class clazz){
-          //设置创建子类的类
-          enhancer.setSuperclass(clazz);
-          enhancer.setCallback(this);
-          
-          return enhancer.create();
-       }
-       
-       /**
-        * 拦截所有目标类方法的调用
-        * obj  目标类的实例
-        * m   目标方法的反射对象
-        * args  方法的参数
-        * proxy代理类的实例
-        */
-       @Override
-       public Object intercept(Object obj, Method m, Object[] args,
-             MethodProxy proxy) throws Throwable {
-          System.out.println("日志开始...");
-          //代理类调用父类的方法
-          proxy.invokeSuper(obj, args);
-          System.out.println("日志结束...");
-          return obj;
-       }
-    
+public interface FooService {
+
+    Foo getFoo(String fooName, int age);
+}
+
+public class DefaultFooService implements FooService {
+
+    public Foo getFoo(String name, int age) {
+        return new Foo(name, age);
     }
-    ```
+}
+```
 
-    
+上面的接口不是必须的，但是在接口编程中是推荐使用的
 
-  * jdk 动态代理
+接下来是方面。请注意，该`profile(..)`方法接受许多强类型参数，第一个参数恰好是用于继续方法调用的连接点：此参数的存在表明该参数 `profile(..)`将用作`around`建议： 
 
-    ```java
-    public class TimeHandler implements InvocationHandler {
-    
-    	public TimeHandler(Object target) {
-    		super();
-    		this.target = target;
-    	}
-    
-    	private Object target;
-    	
-    	@Override
-    	public Object invoke(Object proxy, Method method, Object[] args)
-    			throws Throwable {
-    		long starttime = System.currentTimeMillis();
-    		System.out.println("汽车开始行驶....");
-    		method.invoke(target);
-    		long endtime = System.currentTimeMillis();
-    		System.out.println("汽车结束行驶....  汽车行驶时间："
-    				+ (endtime - starttime) + "毫秒！");
-    		return null;
-    	}
+```java
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.util.StopWatch;
+
+public class SimpleProfiler {
+
+    public Object profile(ProceedingJoinPoint call, String name, int age) throws Throwable {
+        StopWatch clock = new StopWatch("Profiling for '" + name + "' and '" + age + "'");
+        try {
+            clock.start(call.toShortString());
+            return call.proceed();
+        } finally {
+            clock.stop();
+            System.out.println(clock.prettyPrint());
+        }
     }
-    
-    ```
+}
+```
 
-    **有没有发现这个最能够体现 我们AOP 的实现使用的是动态代理**
+最后，这是为特定连接点执行上述建议所需的XML配置：  
 
-- `Advice parameters` :  如果您希望显式指定通知方法的参数名称（不依赖于前面描述的检测策略），那么这是使用`arg-names`属性完成的 
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-  参考下文中 6.3.2 注解的 argNames 的作用
+    <!-- this is the object that will be proxied by Spring's AOP infrastructure -->
+    <bean id="fooService" class="x.y.service.DefaultFooService"/>
 
-- 一种特殊的用法
+    <!-- this is the actual advice itself -->
+    <bean id="profiler" class="x.y.SimpleProfiler"/>
 
-  ```java
-  package x.y.service;
-  
-  public interface FooService {
-  
-      Foo getFoo(String fooName, int age);
-  }
-  
-  public class DefaultFooService implements FooService {
-  
-      public Foo getFoo(String name, int age) {
-          return new Foo(name, age);
-      }
-  }
-  ```
+    <aop:config>
+        <aop:aspect ref="profiler">
 
-  上面的接口不是必须的，但是在接口编程中是推荐使用的
+            <aop:pointcut id="theExecutionOfSomeFooServiceMethod"
+                expression="execution(* x.y.service.FooService.getFoo(String,int))
+                and args(name, age)"/>
 
-  接下来是方面。请注意，该`profile(..)`方法接受许多强类型参数，第一个参数恰好是用于继续方法调用的连接点：此参数的存在表明该参数 `profile(..)`将用作`around`建议： 
+            <aop:around pointcut-ref="theExecutionOfSomeFooServiceMethod"
+                method="profile"/>
 
-  ```java
-  import org.aspectj.lang.ProceedingJoinPoint;
-  import org.springframework.util.StopWatch;
-  
-  public class SimpleProfiler {
-  
-      public Object profile(ProceedingJoinPoint call, String name, int age) throws Throwable {
-          StopWatch clock = new StopWatch("Profiling for '" + name + "' and '" + age + "'");
-          try {
-              clock.start(call.toShortString());
-              return call.proceed();
-          } finally {
-              clock.stop();
-              System.out.println(clock.prettyPrint());
-          }
-      }
-  }
-  ```
+        </aop:aspect>
+    </aop:config>
 
-  最后，这是为特定连接点执行上述建议所需的XML配置：  
-
-  ```xml
-  <beans xmlns="http://www.springframework.org/schema/beans"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:aop="http://www.springframework.org/schema/aop"
-      xsi:schemaLocation="
-          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-  
-      <!-- this is the object that will be proxied by Spring's AOP infrastructure -->
-      <bean id="fooService" class="x.y.service.DefaultFooService"/>
-  
-      <!-- this is the actual advice itself -->
-      <bean id="profiler" class="x.y.SimpleProfiler"/>
-  
-      <aop:config>
-          <aop:aspect ref="profiler">
-  
-              <aop:pointcut id="theExecutionOfSomeFooServiceMethod"
-                  expression="execution(* x.y.service.FooService.getFoo(String,int))
-                  and args(name, age)"/>
-  
-              <aop:around pointcut-ref="theExecutionOfSomeFooServiceMethod"
-                  method="profile"/>
-  
-          </aop:aspect>
-      </aop:config>
-  
-  </beans>
-  ```
-
+</beans>
+```
 ### 6.3.2 注解的方式
 
 和xml 方式相识，spring 中也存在相对应的注解，使用方式都差不多
 
-* `@Before`: 这里举个例子 顺便 说明一下这些注解中的 argNames的作用
+#### `@Before`
 
-  ```java
-  @Component
-  public class Monkey {
+这里举个例子 顺便 说明一下这些注解中的 argNames的作用
+
+```java
+@Component
+public class Monkey {
+
+    public void run(String message,String message2) {
+        System.out.println(" 猴子 上树 "+message+message2);
+    }
+}
+```
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+
+    @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+    public void anyMethod(){};
+
+    @Before(value = "anyMethod() && args(message,message2) ",argNames = "message,message2")
+    public void sayHello(String message,String message2){
+        System.out.println(" hello "+message+message2);
+    }
+}
+```
+
+```java
+public class AopByAnnotationTest extends UnitTestBase {
+
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
+
+    @Test
+    public void test() {
+        Monkey monkey = getBean("monkey");
+        monkey.run(" hello "," world ");
+    }
+
+}
+```
+
+
+
+#### ` @AfterReturning` : 
+
+这里我也给出一个使用 returning 属性的例子
+
+**returnning 中指定的名称和方法的参数名称要对应**
+
+Advice
+
+```java
+public class MyAspect {
+
+    @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+    public void anyMethod(){};
+
+    @AfterReturning(pointcut = "anyMethod() && args()",returning = "flag")
+    public void sayGoodNight(boolean flag){
+        System.out.println(" good night "+flag);
+    }
+}
+```
+
+目标类
+
+```java
+@Component
+public class Monkey {
+
+    public boolean produce() {
+        System.out.println(" produce ");
+        return true;
+    }
+
+}
+```
+
+测试方法
+
+```java
+public class AopByAnnotationTest extends UnitTestBase {
+
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
+
+    @Test
+    public void testAfterReturnning() {
+        Monkey monkey = getBean("monkey");
+        monkey.produce();
+    }
+}
+```
+
+#### `@AfterThrowing`: 
+
+这里我也给出一个使用 throwing 属性的例子
+
+**throwing 中指定的名称和方法的参数名称要对应**
+
+Advice
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+
+    @AfterThrowing(pointcut = "execution(* com.stu.springdemo.aop.annotation." +
+            "testPo.Monkey.throwException())",throwing = "runtimeException")
+    public void exception(RuntimeException runtimeException){
+        System.out.println(" exception : "+runtimeException.getMessage());
+    }
+}
+```
+
+目标类
+
+```java
+@Component
+public class Monkey {
+
+ 		public void throwException() {
+        System.out.println(" throwExepction ");
+        throw new RuntimeException(" 抛出了一个异常 ");
+    }
+
+}
+```
+
+测试方法
+
+```java
+public class AopByAnnotationTest extends UnitTestBase {
+
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
+
+    @Test
+    public void testAfterThrowing() {
+        Monkey monkey = getBean("monkey");
+        monkey.throwException();
+    }
+}
+```
+
+#### `@After`
+
+Advice
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+	  
+  	@Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+    public void anyMethod(){};
   
-      public void run(String message,String message2) {
-          System.out.println(" 猴子 上树 "+message+message2);
-      }
-  }
-  ```
+    @After("anyMethod()")
+    public void after(){
+        System.out.println(" after ");
+    }
+}
+```
 
-  ```java
-  @Component
-  @Aspect
-  public class MyAspect {
+目标类
+
+```java
+@Component
+public class Monkey {
   
-      @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
-      public void anyMethod(){};
+ 		public void process() {
+        System.out.println(" process ");
+    }
+
+}
+```
+
+测试方法
+
+```java
+public class AopByAnnotationTest extends UnitTestBase {
+
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
+
+    @Test
+    public void testAround() {
+        Monkey monkey = getBean("monkey");
+        monkey.process();
+    }
+}
+```
+
+#### `@Around`
+
+Advice
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+
+    @Around("execution(* com.stu.springdemo.aop.annotation.testPo.Monkey.process())")
+    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+        System.out.println(" around 1 ");
+        Object retVal = pjp.proceed();// retVal 被织入的方法执行之后的返回值
+        System.out.println(" around 2 ");
+        System.out.println(" ProceedingJoinPoint pjp = "+retVal);
+        return retVal;
+    }
+}
+```
+
+目标类
+
+```java
+@Component
+public class Monkey {
   
-      @Before(value = "anyMethod() && args(message,message2) ",argNames = "message,message2")
-      public void sayHello(String message,String message2){
-          System.out.println(" hello "+message+message2);
-      }
-  }
-  ```
+ 		public void process() {
+        System.out.println(" process ");
+    }
 
-  ```java
-  public class AopByAnnotationTest extends UnitTestBase {
-  
-      public AopByAnnotationTest() {
-          super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
-      }
-  
-      @Test
-      public void test() {
-          Monkey monkey = getBean("monkey");
-          monkey.run(" hello "," world ");
-      }
-  
-  }
-  ```
+}
+```
 
-  **使用 argNames 一般是在 定义的advice方法需要获取 他所匹配的连接点方法的参数的时候**
+测试方法
 
-  **`args(message,message2)`**，表达式中的内容就是 你所需要匹配的连接点方法的两个参数，一定要和匹配的连接点法方法参数名相同，这样写了之后 下面的代码执行过程中  这个`message = ' hello' , message2 = ' world' `； 如果你写成 `args(message2,message) `  那就是 ` message2 = ' hello' , message = ' world'`
+```java
+public class AopByAnnotationTest extends UnitTestBase {
 
-  **`argNames = " message,message2"`**, 由于这时候 **`args(message,message2)`** => `message = ' hello' , message2 = ' world' 。那么传给` sayHello(String message,String message2`） 方法的就是 ` message = ' hello' , message2 = ' world'`
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
 
-  如果你写成 `argNames = " message2,message"` 由于这时候 **`args(message,message2)`** => `message = ' hello' , message2 = ' world'` 。那么传给` sayHello(String message,String message2`） 方法的就是 ` message = ' world' , message2 = ' hello'`
+    @Test
+    public void testAround() {
+        Monkey monkey = getBean("monkey");
+        monkey.process();
+    }
+}
+```
 
-* ` @AfterReturning` : argNames 使用方法都一样；这里我也给出一个使用 returning 属性的例子
+#### `Advice parameters` 以及 argNames
 
-  **returnning 中指定的名称和方法的参数名称要对应**
+**将待织入的方法参数传递给advice, 如果在args表达式中使用参数名称代替类型名称，则在调用通知时，相应参数的值将作为参数值传递。** 我们看一个例子
 
-  Advice
+advice
 
-  ```java
-  public class MyAspect {
-  
-      @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
-      public void anyMethod(){};
-  
-      @AfterReturning(pointcut = "anyMethod() && args()",returning = "flag")
-      public void sayGoodNight(boolean flag){
-          System.out.println(" good night "+flag);
-      }
-  }
-  ```
+```java
+@Component
+@Aspect
+public class MyAspect {
 
-  目标对象
+    @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+    public void anyMethod(){};
 
-  ```java
-  @Component
-  public class Monkey {
-  
-      public boolean produce() {
-          System.out.println(" produce ");
-          return true;
-      }
-  
-  }
-  ```
+    @Before(value = "anyMethod() && args(m1,m2) ")
+    public void sayHello(String m1,String m2){
+        System.out.println(" hello "+m1+m2);
+    }
+}
+```
 
-  测试方法
+目标类
 
-  ```java
-  public class AopByAnnotationTest extends UnitTestBase {
-  
-      public AopByAnnotationTest() {
-          super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
-      }
-  
-      @Test
-      public void testAfterReturnning() {
-          Monkey monkey = getBean("monkey");
-          monkey.produce();
-      }
-  }
-  ```
+```java
+@Component
+public class Monkey {
 
-* `@AfterThrowing`: argNames 使用方法都一样；这里我也给出一个使用 throwing 属性的例子
+    public void run(String message,String message2) {
+        System.out.println(" 猴子 上树 "+message+message2);
+    }
+}    
+```
 
-  **throwing 中指定的名称和方法的参数名称要对应**
+测试方法
 
-  Advice
+```java
+public class AopByAnnotationTest extends UnitTestBase {
 
-  ```java
-  @Component
-  @Aspect
-  public class MyAspect {
-  
-      @AfterThrowing(pointcut = "execution(* com.stu.springdemo.aop.annotation." +
-              "testPo.Monkey.throwException())",throwing = "runtimeException")
-      public void exception(RuntimeException runtimeException){
-          System.out.println(" exception : "+runtimeException.getMessage());
-      }
-  }
-  ```
+    public AopByAnnotationTest() {
+        super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+    }
 
-  目标对象
+    @Test
+    public void testBefore() {
+        Monkey monkey = getBean("monkey");
+        monkey.run(" hello "," world ");
+    }
+}    
+```
 
-  ```java
-  @Component
-  public class Monkey {
-  
-   		public void throwException() {
-          System.out.println(" throwExepction ");
-          throw new RuntimeException(" 抛出了一个异常 ");
-      }
-  
-  }
-  ```
+**`args(m1,m2)`**，**表达式中的内容就是 advice方法的两个参数，一定要和匹配的连接点法方法参数名相同**，这样写了之后 下面的代码执行过程中  这个`m1 = ' hello' , m2 = ' world' `；最后的执行结果 就是将 m1.m2的值传给方法对应的参数 结果就是：
 
-  测试方法
+```
+ hello  hello  world 
+ 猴子 上树  hello  world 
+```
 
-  ```java
-  public class AopByAnnotationTest extends UnitTestBase {
-  
-      public AopByAnnotationTest() {
-          super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
-      }
-  
-      @Test
-      public void testAfterThrowing() {
-          Monkey monkey = getBean("monkey");
-          monkey.throwException();
-      }
-  }
-  ```
+ 如果你写成 `args(m2,m1) `  那就是 ` message2 = ' hello' , message = ' world'，那么最后的执行结果就是
 
-* `@`
+```
+hello  world  hello 
+ 猴子 上树  hello  world 
+```
 
-* ``
+**注意第一行的 world , hello 的位置变化**
 
-* ``
+##### 使用 argNames 
+
+如果这时候 advice 出现了一点点 变化多了一个argNames属性
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+
+    @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+    public void anyMethod(){};
+
+    @Before(value = "anyMethod() && args(m1,m2) ",argNames = "m2,m1")
+    public void sayHello(String m1,String m2){
+        System.out.println(" hello "+m1+m2);
+    }
+}
+```
+
+首先`args(m1,m2)`=>`m1 = ' hello' , m2 = ' world' `；
+
+然后 `argNames = "m2,m1"` 这个说的是把值按照 m2,m1 的顺序 传给 `sayHello(String m1,String m2)` 方法，相当于 `sayHello("world","hello")` 那么结果就是
+
+```
+hello  world  hello 
+ 猴子 上树  hello  world 
+```
+
+如果  `argNames = "m1,m2"`=>`sayHello("hello","world")`
+
+**表达式中的内容是 advice方法的两个参数，一定要和匹配的连接点法方法参数名相同**
+
+
 
 ## 6.4  Introduction 
 
