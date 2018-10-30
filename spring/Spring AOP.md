@@ -91,6 +91,10 @@
 </bean>
  ```
 
+#### 切面的实例化模型
+
+xml方式不支持
+
 ### 6.1.2 @Aspect 方式
 
 修饰在类上，注意这个类同时需要用到`@Component` 注解，因为这个注解不能通过类路径自动检测来发现（当然你也可以在xml配置这个bean,来达到使用 `@Component`注解的效果）
@@ -118,6 +122,10 @@ public class AppConfig {
 ```xml
 <aop:aspectj-autoproxy/>
 ```
+
+#### 切面的实例化模型
+
+Spring支持AspectJ的`perthis`和`pertarget` 实例化模型（`percflow, percflowbelow,`和`pertypewithin`目前不支持）。 这两种模型的功能 具体的百度吧，我也不是很理解，也没用过。
 
 ## 6.2 PointCut
 
