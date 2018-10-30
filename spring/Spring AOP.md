@@ -322,7 +322,7 @@ within(com.xyz.service..*)
 ```
 @annotation(org.springframework.transaction.annotation.Transactional)
 ```
-#### bean 
+#### `bean` 
 
 * 匹配特定的bean, 通过id 或 name
 
