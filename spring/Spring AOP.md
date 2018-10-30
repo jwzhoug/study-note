@@ -163,7 +163,7 @@ private void anyOldTransfer() {...}
 private void accountDataAccessOperation(Account account) {}
 
 
-//advice中使用的例子
+//advice中使用的例子 
 @Before("accountDataAccessOperation(account)")
 public void validateAccount(Account account) {
     // ...
@@ -954,6 +954,58 @@ hello  world  hello
 如果  `argNames = "m1,m2"`=>`sayHello("hello","world")` **推荐这种方式 按照参数正常顺序的使用，因为如果 m1 , m2 类型不同，那就一定要按照 方法参数的顺序来写，不然这个advice将得不到执行**
 
 **表达式中的内容是 advice方法的两个参数，一定要和匹配的连接点法方法参数名相同**
+
+##### 使用注解获取参数的例子
+
+假如有这样一个注解：
+
+```java
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MyAnnotation {
+    String value();
+}
+```
+
+然后是与`@Auditable`方法执行相匹配的advice：
+
+```java
+@Before(value = "anyMethod() && @annotation(myAnnotation)")
+public void beforeAnnotation(MyAnnotation myAnnotation){
+        System.out.println(" beforeAnnotation "+myAnnotation.value());
+}
+```
+
+目标类
+
+```java
+@Component
+public class Monkey {
+
+    @MyAnnotation(" 注解中传的参数 Monkey byAnnotation ............ ")
+    public void byAnnotation() {
+        System.out.println(" 测试一下 AOP 注解传参的方式 ");
+    }
+}
+```
+
+测试方法
+
+```java
+@Test
+public void testBeforeAnnotation() {
+    Monkey monkey = getBean("monkey");
+    monkey.byAnnotation();
+}
+```
+
+
 
 更多详细的请看官网的 https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-ataspectj-advice-params
 
