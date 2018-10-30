@@ -111,7 +111,7 @@ public class AppConfig {
 }
 ```
 
-##### 使用XML配置启用@AspectJ支持
+**使用XML配置启用@AspectJ支持**
 
 要使用基于XML的配置启用@AspectJ支持
 
@@ -162,7 +162,7 @@ private void anyOldTransfer() {...}
 
 注解中使用的 表达式 参考 6.2.3 
 
-**由于ASpectJ 是编译期的AOP，所以他在检查代码并匹配连接点与切入点的代价是较为昂贵的，为了降低这样的代价，我们需要尽量进行明确的指定,详情请看 官网 [写出好的切入点](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-common-pointcuts)**
+**由于ASpectJ 是编译期的AOP，所以他在检查代码并匹配连接点与切入点的代价是较为昂贵的，为了降低这样的代价，我们需要尽量进行明确的指定(从范围到具体),详情请看 官网 [写出好的切入点](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-common-pointcuts)**
 
 ### 6.2.3 expression的指示符类型
 
@@ -348,7 +348,7 @@ execution(* com.xyz.service..*.*(..))
 
   `method` 指定的方法是 `<aop:aspect id="beforeExample" ref="aBean">` 中`ref`指定的bean中定义的方法
 
-- `after returning advice`: 在`JionPoint`正常完成后执行的*建议`Advice`
+- `after returning advice`: 在`JionPoint`正常完成后执行的建议`Advice`
 
   ```xml
   <aop:aspect id="afterReturningExample" ref="aBean">
@@ -508,9 +508,7 @@ execution(* com.xyz.service..*.*(..))
 
 - `Advice parameters` :  如果您希望显式指定通知方法的参数名称（不依赖于前面描述的检测策略），那么这是使用`arg-names`属性完成的 
 
-  
-
-  
+  参考下文中 6.3.2 注解的 argNames 的作用
 
 - 一种特殊的用法
 
@@ -589,8 +587,52 @@ execution(* com.xyz.service..*.*(..))
 
 和xml 方式相识，spring 中也存在相对应的注解，使用方式都差不多
 
-* `@Before`:
-* 
+* `@Before`: 这里举个例子 顺便 说明一下这些注解中的 argNames的作用
+
+  ```java
+  @Component
+  public class Monkey {
+  
+      public void run(String message,String message2) {
+          System.out.println(" 猴子 上树 "+message+message2);
+      }
+  }
+  ```
+
+  ```java
+  @Component
+  @Aspect
+  public class MyAspect {
+  
+      @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+      public void anyMethod(){};
+  
+      @Before(value = "anyMethod() && args(message,message2) ",argNames = "message,message2")
+      public void sayHello(String message,String message2){
+          System.out.println(" hello "+message+message2);
+      }
+  }
+  ```
+
+  **使用 argNames 一般是在 定义的advice方法需要获取 他所匹配的连接点方法的参数的时候**
+
+  **args(message,message2)**，表达式中的内容就是 你所需要匹配的连接点方法的两个参数，一定要和匹配的连接点法方法参数名相同，如果你写成 args(message2,message) 不会报错，但是会造成不必要的问题，最好不要这样写，这样写了之后 下面的代码执行过程中  这个message = ' hello' , message2 = ' world'
+
+  ```java
+  public class AopByAnnotationTest extends UnitTestBase {
+  
+      public AopByAnnotationTest() {
+          super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+      }
+  
+      @Test
+      public void test() {
+          Monkey monkey = getBean("monkey");
+          monkey.run(" hello "," world ");
+      }
+  
+  }
+  ```
 
 ## 6.4  Introduction 
 
