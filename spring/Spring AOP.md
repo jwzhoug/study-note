@@ -236,7 +236,7 @@ execution(* com.xyz.service..*.*(..))
 
  **更常用于绑定形式，匹配粒度——方法参数** （仅在 Spring AOP 这样使用） 
 
-* 任何连接点，它接受一个参数，并且在运行时传递的参数是`Serializable` 
+* 任何一个方法具有一个方法参数，参数是`Serializable` 的方法
 
 ```java
 args(java.io.Serializable)
@@ -253,7 +253,7 @@ args(java.lang.String,..,java.lang.Integer)
 
 **也可以用于绑定形式 匹配粒度——方法参数**** （仅在 Spring AOP 这样使用） 
 
-* 它接受一个参数，并且传递的参数的运行时类型具有`@Classified`注释：
+* 匹配方法中接收一个参数，这个参数是被`com.xyz.security.Classified` 注解修饰的类
 
 ```java
 @args(com.xyz.security.Classified)
@@ -270,15 +270,17 @@ args(java.lang.String,..,java.lang.Integer)
 
 #### `target` 
 
-**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ）
+匹配粒度_——类，**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ）
 
-* 目标对象实现AccountService接口的任何连接点：
+* 匹配实现AccountService接口的任何目标对象：
 ```java
   target(com.xyz.service.AccountService)
 ```
+​	如果`com.xyz.service.AccountService` 这是一个类那么匹配这个类以及这个类的所有子类
+
 #### `@target` 
 
- **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ）
+ 匹配粒度_——类，**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ）
 
 - **目标对象**具有`@Transactional`注释的任何连接点：
 
@@ -288,7 +290,7 @@ args(java.lang.String,..,java.lang.Integer)
 
 #### `within`
 
-  within表达式的粒度为类，其参数为全路径的类名（可使用通配符）。 （仅在 Spring AOP 这样使用 ） 
+  匹配粒度_——类，其参数为全路径的类名（可使用通配符）。 （仅在 Spring AOP 这样使用 ） 
 
 * 服务包中的任何连接点：
 
@@ -304,18 +306,18 @@ within(com.xyz.service..*)
 
 #### `@within` 
 
-**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ） 
+匹配粒度_——类，表示匹配带有指定注解的类 **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ） 
 
-- **目标对象**具有`@Transactional`注释的任何连接点：：
+- 表示匹配使用`org.springframework.transaction.annotation.Transactional`注解标注的**类**： 
 
 ```java
 @within(org.springframework.transaction.annotation.Transactional)
 ```
 #### `@annotation` 
 
-**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ） 
+匹配粒度_——方法,**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ） 
 
-- 其中**执行方法**具有 `@Transactional`注释的任何连接点：
+- 表示匹配使用`org.springframework.transaction.annotation.Transactional`注解标注的**方法**： 
 
 ```
 @annotation(org.springframework.transaction.annotation.Transactional)
