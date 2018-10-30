@@ -234,7 +234,7 @@ execution(* com.xyz.service..*.*(..))
 
 #### `args` 
 
- **更常用于绑定形式，匹配粒度——方法参数** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+ **更常用于绑定形式，匹配粒度——方法参数** （仅在 Spring AOP 这样使用） 
 
 * 任何连接点，它接受一个参数，并且在运行时传递的参数是`Serializable` 
 
@@ -251,16 +251,26 @@ args(java.lang.String,..,java.lang.Integer)
 
 **使用指定注解标注的类作为某个方法的参数时该方法将会被匹配。** 
 
-**也可以用于绑定形式 匹配粒度——方法参数**** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+**也可以用于绑定形式 匹配粒度——方法参数**** （仅在 Spring AOP 这样使用） 
 
 * 它接受一个参数，并且传递的参数的运行时类型具有`@Classified`注释：
 
-```
+```java
 @args(com.xyz.security.Classified)
 ```
+#### `this`
+
+  **更常用于绑定形式** （仅在 Spring AOP 这样使用 ） 
+
+- 代理实现`AccountService`接口的任何连接点
+
+  ```java
+  this(com.xyz.service.AccountService)
+  ```
+
 #### `target` 
 
-**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
+**更常用于绑定形式**  （仅在 Spring AOP 这样使用 ）
 
 * 目标对象实现AccountService接口的任何连接点：
 ```java
@@ -268,7 +278,7 @@ args(java.lang.String,..,java.lang.Integer)
 ```
 #### `@target` 
 
- **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了）
+ **也可以用于绑定形式** （仅在 Spring AOP 这样使用 ）
 
 - **目标对象**具有`@Transactional`注释的任何连接点：
 
@@ -278,7 +288,7 @@ args(java.lang.String,..,java.lang.Integer)
 
 #### `within`
 
-  within表达式的粒度为类，其参数为全路径的类名（可使用通配符）。 （仅在 Spring AOP 这样使用 ，如果在   	 AspectJ 这里就不能这样用了） 
+  within表达式的粒度为类，其参数为全路径的类名（可使用通配符）。 （仅在 Spring AOP 这样使用 ） 
 
 * 服务包中的任何连接点：
 
@@ -294,25 +304,16 @@ within(com.xyz.service..*)
 
 #### `@within` 
 
-**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ） 
 
 - **目标对象**具有`@Transactional`注释的任何连接点：：
 
 ```java
 @within(org.springframework.transaction.annotation.Transactional)
 ```
-#### `this`
-
-  **更常用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
-
-* 代理实现`AccountService`接口的任何连接点
-
-```java
-this(com.xyz.service.AccountService)
-```
 #### `@annotation` 
 
-**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ，如果在spring中使用 AspectJ 这里就不能这样用了） 
+**也可以用于绑定形式** （仅在 Spring AOP 这样使用 ） 
 
 - 其中**执行方法**具有 `@Transactional`注释的任何连接点：
 
@@ -329,7 +330,7 @@ this(com.xyz.service.AccountService)
 
 * 具有与通配符表达式匹配的名称的Spring bean
 
-  ```
+  ```java
   bean(*name or *id)
   ```
 
