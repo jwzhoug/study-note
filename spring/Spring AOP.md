@@ -162,7 +162,7 @@ private void anyOldTransfer() {...}
 
 注解中使用的 表达式 参考 6.2.3 
 
-**由于ASpectJ 是编译期的AOP，所以他在检查代码并匹配连接点与切入点的代价是较为昂贵的，为了降低这样的代价，我们需要尽量进行明确的指定**
+**由于ASpectJ 是编译期的AOP，所以他在检查代码并匹配连接点与切入点的代价是较为昂贵的，为了降低这样的代价，我们需要尽量进行明确的指定,详情请看 官网 [写出好的切入点](https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-common-pointcuts)**
 
 ### 6.2.3 expression的指示符类型
 
