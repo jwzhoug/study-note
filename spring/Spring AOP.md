@@ -614,10 +614,6 @@ execution(* com.xyz.service..*.*(..))
   }
   ```
 
-  **使用 argNames 一般是在 定义的advice方法需要获取 他所匹配的连接点方法的参数的时候**
-
-  **args(message,message2)**，表达式中的内容就是 你所需要匹配的连接点方法的两个参数，一定要和匹配的连接点法方法参数名相同，如果你写成 args(message2,message) 不会报错，但是会造成不必要的问题，最好不要这样写，这样写了之后 下面的代码执行过程中  这个message = ' hello' , message2 = ' world'
-
   ```java
   public class AopByAnnotationTest extends UnitTestBase {
   
@@ -633,6 +629,60 @@ execution(* com.xyz.service..*.*(..))
   
   }
   ```
+
+  **使用 argNames 一般是在 定义的advice方法需要获取 他所匹配的连接点方法的参数的时候**
+
+  **`args(message,message2)`**，表达式中的内容就是 你所需要匹配的连接点方法的两个参数，一定要和匹配的连接点法方法参数名相同，这样写了之后 下面的代码执行过程中  这个`message = ' hello' , message2 = ' world' `； 如果你写成 `args(message2,message) `  那就是 ` message2 = ' hello' , message = ' world'`
+
+  **`argNames = " message,message2"`**, 由于这时候 **`args(message,message2)`** => `message = ' hello' , message2 = ' world' 。那么传给` sayHello(String message,String message2`） 方法的就是 ` message = ' hello' , message2 = ' world'`
+
+  如果你写成 `argNames = " message2,message"` 由于这时候 **`args(message,message2)`** => `message = ' hello' , message2 = ' world'` 。那么传给` sayHello(String message,String message2`） 方法的就是 ` message = ' world' , message2 = ' hello'`
+
+* ` @AfterReturning` : 基本使用方法和上面的一样，不过如果要使用他的 returning 属性 这个和xml配置的方式类似，这里我也给出一个例子吧
+
+  ```java
+  public class MyAspect {
+  
+      @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
+      public void anyMethod(){};
+  
+      @AfterReturning(pointcut = "anyMethod() && args()",returning = "flag")
+      public void sayGoodNight(boolean flag){
+          System.out.println(" good night "+flag);
+      }
+  }
+  ```
+
+  ```java
+  @Component
+  public class Monkey {
+  
+      public boolean produce() {
+          System.out.println(" produce ");
+          return true;
+      }
+  
+  }
+  ```
+
+  测试方法
+
+  ```java
+  public class AopByAnnotationTest extends UnitTestBase {
+  
+      public AopByAnnotationTest() {
+          super("classpath:spring/aop/annotation/spring_aop_by_annotation.xml");
+      }
+  
+      @Test
+      public void testAfterReturnning() {
+          Monkey monkey = getBean("monkey");
+          monkey.produce();
+      }
+  }
+  ```
+
+* 
 
 ## 6.4  Introduction 
 
