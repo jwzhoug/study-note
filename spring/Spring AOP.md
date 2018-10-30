@@ -158,6 +158,16 @@ public class AppConfig {
 ```java
 @Pointcut("execution(* transfer(..))")
 private void anyOldTransfer() {...}
+
+@Pointcut("com.xyz.myapp.SystemArchitecture.dataAccessOperation() && args(account,..)")
+private void accountDataAccessOperation(Account account) {}
+
+
+//advice中使用的例子
+@Before("accountDataAccessOperation(account)")
+public void validateAccount(Account account) {
+    // ...
+}
 ```
 
 注解中使用的 表达式 参考 6.2.3 
