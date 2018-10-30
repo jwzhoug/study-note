@@ -596,15 +596,7 @@ public class SimpleProfiler {
 
 这里举个例子 顺便 说明一下这些注解中的 argNames的作用
 
-```java
-@Component
-public class Monkey {
-
-    public void run(String message,String message2) {
-        System.out.println(" 猴子 上树 "+message+message2);
-    }
-}
-```
+Advice
 
 ```java
 @Component
@@ -614,12 +606,26 @@ public class MyAspect {
     @Pointcut("execution(* com.stu.springdemo.aop.annotation.testPo.*.*(..))")
     public void anyMethod(){};
 
-    @Before(value = "anyMethod() && args(message,message2) ",argNames = "message,message2")
-    public void sayHello(String message,String message2){
-        System.out.println(" hello "+message+message2);
+    @Before(value = "anyMethod()")
+    public void before(){
+        System.out.println(" before ");
     }
 }
 ```
+
+目标类
+
+```java
+@Component
+public class Monkey {
+
+    public void run() {
+        System.out.println(" 猴子 树上飞  ");
+    }
+}
+```
+
+测试方法
 
 ```java
 public class AopByAnnotationTest extends UnitTestBase {
@@ -631,13 +637,10 @@ public class AopByAnnotationTest extends UnitTestBase {
     @Test
     public void test() {
         Monkey monkey = getBean("monkey");
-        monkey.run(" hello "," world ");
+        monkey.run();
     }
-
 }
 ```
-
-
 
 #### ` @AfterReturning` : 
 
