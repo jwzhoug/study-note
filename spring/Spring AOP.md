@@ -93,9 +93,31 @@
 
 ### 6.1.2 @Aspect 方式
 
-修饰在类上，注意这个累同时需要用到`@Component` 以及其他定义Spring bean 的注解，详情查看[spring 注解驱动](https://github.com/Alan-Jun/study-note/blob/master/spring/Spring%20Annotation%20Driver.md)
+修饰在类上，注意这个类同时需要用到`@Component` 注解，因为这个注解不能通过类路径自动检测来发现（当然你也可以在xml配置这个bean,来达到使用 `@Component`注解的效果）
 
+关于注解方面的内容可以查看我的另一篇文章[spring 注解驱动](https://github.com/Alan-Jun/study-note/blob/master/spring/Spring%20Annotation%20Driver.md)
 
+`@Aspect`和 xml 配置的方式是相同的功能，不过是通过注解在类上来实现了。
+
+**他可能包含方法和字段。还可能包含`PointCut`，`Advice`和`Introdution`声明。** 
+
+**要使用Java启用@AspectJ支持**
+
+```java
+@Configuration
+@EnableAspectJAutoProxy
+public class AppConfig {
+
+}
+```
+
+##### 使用XML配置启用@AspectJ支持
+
+要使用基于XML的配置启用@AspectJ支持
+
+```xml
+<aop:aspectj-autoproxy/>
+```
 
 ## 6.2 PointCut
 
@@ -131,12 +153,16 @@
 
 ### 6.2.2 @Pointcut 方式
 
+定义切入点：（注意方法返回类型必须是void）
+
 ```java
 @Pointcut("execution(* transfer(..))")
 private void anyOldTransfer() {...}
 ```
 
 注解中使用的 表达式 参考 6.2.3 
+
+**由于ASpectJ 是编译期的AOP，所以他在检查代码并匹配连接点与切入点的代价是较为昂贵的，为了降低这样的代价，我们需要尽量进行明确的指定**
 
 ### 6.2.3 expression的指示符类型
 
@@ -164,7 +190,7 @@ execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-patte
 
 `throws-pattern`: 描述抛出什么样的异常
 
- 表达式例子如下： 
+ **表达式例子如下**： 
 
 - 执行任何公共方法：
 
@@ -561,7 +587,10 @@ execution(* com.xyz.service..*.*(..))
 
 ### 6.3.2 注解的方式
 
-和xml 方式相识，spring 中存在相对应的注解，使用方式都差不多
+和xml 方式相识，spring 中也存在相对应的注解，使用方式都差不多
+
+* `@Before`:
+* 
 
 ## 6.4  Introduction 
 
