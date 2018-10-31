@@ -632,8 +632,6 @@ public class SimpleProfiler {
 
 #### `@Before`
 
-这里举个例子 顺便 说明一下这些注解中的 argNames的作用
-
 Advice
 
 ```java
