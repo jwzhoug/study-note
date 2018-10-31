@@ -487,7 +487,7 @@ public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
 *  cglib
 
 ```java
-  public class CglibProxy implements MethodInterceptor {
+public class CglibProxy implements MethodInterceptor {
   
      private Enhancer enhancer = new Enhancer();
      
@@ -550,7 +550,7 @@ public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
 
   **有没有发现这个最能够体现 我们AOP 的实现使用的是动态代理**
 
-#### `Advice parameters`
+#### 如何给`advice`传参数
 
 ```java
 package x.y.service;
@@ -883,7 +883,7 @@ public class AopByAnnotationTest extends UnitTestBase {
 }
 ```
 
-#### `Advice parameters` 以及 argNames
+#### `如何给`advice`传参数` 以及 argNames
 
 **将待织入的方法参数传递给advice, 如果在args表达式中使用参数名称代替类型名称，则在调用通知时，相应参数的值将作为参数值传递。** 我们看一个例子
 
