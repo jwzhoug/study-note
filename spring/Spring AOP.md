@@ -247,7 +247,7 @@ execution(* com.xyz.service..*.*(..))
 
 #### `args` 
 
- **更常用于绑定形式，匹配粒度——方法参数** （这个表达式仅在 Spring AOP 使用） 
+匹配粒度——方法参数 （这个表达式仅在 Spring AOP 使用） 
 
 * 任何一个方法具有一个方法参数，参数是`Serializable` 的方法
 
@@ -273,7 +273,7 @@ args(java.lang.String,..,java.lang.Integer)
 ```
 #### `this`
 
-  **更常用于绑定形式** （这个表达式仅在 Spring AOP 使用 ） 
+（这个表达式仅在 Spring AOP 使用 ） 
 
 - 代理实现`AccountService`接口的任何连接点
 
@@ -283,7 +283,7 @@ args(java.lang.String,..,java.lang.Integer)
 
 #### `target` 
 
-匹配粒度_——类，**更常用于绑定形式**  （这个表达式仅在 Spring AOP 使用 ）
+匹配粒度_——类，（这个表达式仅在 Spring AOP 使用 ）
 
 * 匹配实现AccountService接口的任何目标对象：
 ```java
@@ -293,7 +293,7 @@ args(java.lang.String,..,java.lang.Integer)
 
 #### `@target` 
 
- 匹配粒度_——类，**也可以用于绑定形式** （这个表达式仅在 Spring AOP 使用 ）
+ 匹配粒度_——类（这个表达式仅在 Spring AOP 使用 ）
 
 - **目标对象**具有`@Transactional`注释的任何连接点：
 
@@ -319,7 +319,7 @@ within(com.xyz.service..*)
 
 #### `@within` 
 
-匹配粒度_——类，表示匹配带有指定注解的类 **也可以用于绑定形式** （这个表达式仅在 Spring AOP 使用 ） 
+匹配粒度_——类，表示匹配带有指定注解的类 （这个表达式仅在 Spring AOP 使用 ） 
 
 - 表示匹配使用`org.springframework.transaction.annotation.Transactional`注解标注的**类**： 
 
@@ -328,7 +328,7 @@ within(com.xyz.service..*)
 ```
 #### `@annotation` 
 
-匹配粒度_——方法,**也可以用于绑定形式** （这个表达式仅在 Spring AOP 使用 ） 
+匹配粒度_——方法（这个表达式仅在 Spring AOP 使用 ） 
 
 - 表示匹配使用`org.springframework.transaction.annotation.Transactional`注解标注的**方法**： 
 
