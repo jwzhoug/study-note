@@ -13,3 +13,88 @@
 
 - `Durabillity` 持久性：事务一旦提交之后将他对数据库的操作应该是永久性的，即便出现其他故障，事务处理结果也应不被影响。
 
+# 1. 在spring 中事务管理的顶层接口
+
+* `PlatformTransactionManager` : 事务管理 的最顶层的接口
+
+```java
+public interface PlatformTransactionManager {
+
+    TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException;
+
+    void commit(TransactionStatus status) throws TransactionException;
+
+    void rollback(TransactionStatus status) throws TransactionException;
+}
+```
+
+* `TransactionDefinition`: 事务的一些定义信息的顶层接口（传播，隔离，超时，只读），不理解隔离,传播..的读者可以自己去查找相关资料
+
+  ```java
+  public interface TransactionDefinition {
+      int PROPAGATION_REQUIRED = 0;
+      int PROPAGATION_SUPPORTS = 1;
+      int PROPAGATION_MANDATORY = 2;
+      int PROPAGATION_REQUIRES_NEW = 3;
+      int PROPAGATION_NOT_SUPPORTED = 4;
+      int PROPAGATION_NEVER = 5;
+      int PROPAGATION_NESTED = 6;
+      int ISOLATION_DEFAULT = -1;
+      int ISOLATION_READ_UNCOMMITTED = 1;
+      int ISOLATION_READ_COMMITTED = 2;
+      int ISOLATION_REPEATABLE_READ = 4;
+      int ISOLATION_SERIALIZABLE = 8;
+      int TIMEOUT_DEFAULT = -1;
+  
+      int getPropagationBehavior();
+  
+      int getIsolationLevel();
+  
+      int getTimeout();
+  
+      boolean isReadOnly();
+  
+      @Nullable
+      String getName();
+  }
+  ```
+
+* `TransactionStatus`：为事务代码提供了一种简单的方法来控制事务执行和查询事务状态。它们对于所有事务`API`都是通用的：
+
+  ```java
+  public interface TransactionStatus extends SavepointManager, Flushable {
+      boolean isNewTransaction();
+  
+      boolean hasSavepoint();
+  
+      void setRollbackOnly();
+  
+      boolean isRollbackOnly();
+  
+      void flush();
+  
+      boolean isCompleted();
+  }
+  ```
+
+# 
+
+# 2. 接口实现类的选择
+
+在了解了上面的内容之后，我们知道那只是对应的接口，那么我们在使用中应该怎么去使用对应的实现类呢（当然你也可以基于spring的接口，自定义实现类）
+
+`PlatformTransactionManager`  的实现类的选择我们通常需要了解它的工厂环境，比如：
+
+* 用`JDBC/myBatis `持久化数据时:  我们要选择 `org.springframework.jdbc.datasource.DataSourceTransactionManager`
+
+* 使用`Hibernate`持久化数据时: 我们要选择 `org.springframework.orm.hibernate3.HibernateTransactionManager`
+
+* 使用`JTA`来实现管理事务：我们要选择 `org.springframework.transaction.jta.JtaTransactionManager`
+
+  **当事务跨越多个资源是需要使用这个 `JTA`**
+
+* 使用` JPA` 进行持久化：我们要选择 `org.springframework.orm.jpa.JpaTransactionManager`
+
+* 持久化机制是`Jdo` 的时候：我们要选择 `org.springframework.jdo.JdoTransactionManager`
+
+别的情况下，悬着对应的实现就可以了。
