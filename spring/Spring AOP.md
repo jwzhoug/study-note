@@ -104,7 +104,7 @@ xml方式不支持
 
 ### 6.1.2 @Aspect 方式
 
-修饰在类上，注意这个类同时需要用到`@Component` 注解，因为这个注解不能通过类路径自动检测来发现（当然你也可以在xml配置这个bean,来达到使用 `@Component`注解的效果）
+修饰在类上，注意这个类同时需要用到`@Component` 注解，因为这个`@Aspect`注解不能通过类路径自动检测来发现（当然你也可以在xml配置这个bean,来达到使用 `@Component`注解的效果）
 
 关于注解方面的内容可以查看我的另一篇文章[spring 注解驱动](https://github.com/Alan-Jun/study-note/blob/master/spring/Spring%20Annotation%20Driver.md)
 
