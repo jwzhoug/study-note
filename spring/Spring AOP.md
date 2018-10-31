@@ -207,7 +207,7 @@ execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-patte
 
 `name-pattern`:指定方法名, *  代表所有方法 ,  set* , 代表以set开头的所有方法. 　　　　
 
-`param-pattern`:指定方法参数(声明的类型),(..)代表所有参数,(*)代表一个参数, ( * , String) 代表第一个参数为任何值,第二个为String类型. 
+`param-pattern`:指定方法参数(声明的类型),(..)代表任意数量参数,(*)代表一个参数, ( * , String) 代表第一个参数为任何值,第二个为String类型. 
 
 `modifiers-pattern`: 描述访问控制符 比如 `public`.....
 
