@@ -112,7 +112,7 @@ xml方式不支持
 
 **他可能包含方法和字段。还可能包含`PointCut`，`Advice`和`Introdution`声明。** 
 
-**要使用Java启用@AspectJ支持**
+**使用Java启用@AspectJ支持**
 
 ```java
 @Configuration
