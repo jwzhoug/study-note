@@ -28,56 +28,56 @@ public interface PlatformTransactionManager {
 }
 ```
 
-* `TransactionDefinition`: 事务的一些定义信息的顶层接口（事务传播，事务隔离级别，事务超时，事务只读），不理解隔离级别的读者可以自己去查找相关资料
+* `TransactionDefinition`: 事务的一些定义信息的顶层接口（事务传播行为，事务隔离级别，事务超时，事务只读），不理解隔离级别的读者可以看后文中的基本概念补充这一个章节
 
-  ```java
-  public interface TransactionDefinition {
-      int PROPAGATION_REQUIRED = 0;
-      int PROPAGATION_SUPPORTS = 1;
-      int PROPAGATION_MANDATORY = 2;
-      int PROPAGATION_REQUIRES_NEW = 3;
-      int PROPAGATION_NOT_SUPPORTED = 4;
-      int PROPAGATION_NEVER = 5;
-      int PROPAGATION_NESTED = 6;
-      int ISOLATION_DEFAULT = -1;
-      int ISOLATION_READ_UNCOMMITTED = 1;
-      int ISOLATION_READ_COMMITTED = 2;
-      int ISOLATION_REPEATABLE_READ = 4;
-      int ISOLATION_SERIALIZABLE = 8;
-      int TIMEOUT_DEFAULT = -1;
-  
-      int getPropagationBehavior();
-  
-      int getIsolationLevel();
-  
-      int getTimeout();
-  
-      boolean isReadOnly();
-  
-      @Nullable
-      String getName();
-  }
-  ```
+```java
+public interface TransactionDefinition {
+    int PROPAGATION_REQUIRED = 0;
+    int PROPAGATION_SUPPORTS = 1;
+    int PROPAGATION_MANDATORY = 2;
+    int PROPAGATION_REQUIRES_NEW = 3;
+    int PROPAGATION_NOT_SUPPORTED = 4;
+    int PROPAGATION_NEVER = 5;
+    int PROPAGATION_NESTED = 6;
+    int ISOLATION_DEFAULT = -1;
+    int ISOLATION_READ_UNCOMMITTED = 1;
+    int ISOLATION_READ_COMMITTED = 2;
+    int ISOLATION_REPEATABLE_READ = 4;
+    int ISOLATION_SERIALIZABLE = 8;
+    int TIMEOUT_DEFAULT = -1;
 
-* `TransactionStatus`：为事务代码提供了一种简单的方法来控制事务执行和查询事务状态。它们对于所有事务`API`都是通用的：
+    int getPropagationBehavior();
 
-  ```java
-  public interface TransactionStatus extends SavepointManager, Flushable {
-      boolean isNewTransaction();
-  
-      boolean hasSavepoint();
-  
-      void setRollbackOnly();
-  
-      boolean isRollbackOnly();
-  
-      void flush();
-  
-      boolean isCompleted();
-  }
-  ```
+    int getIsolationLevel();
 
-# 
+    int getTimeout();
+
+    boolean isReadOnly();
+
+    @Nullable
+    String getName();
+}
+```
+
+* `TransactionStatus`：为事务代码提供了一种简单的方法来控制事务执行以及查询事务的状态。它们对于所有事务`API`都是通用的：
+
+```java
+public interface TransactionStatus extends SavepointManager, Flushable {
+    boolean isNewTransaction();// 是否是一个新的事务
+
+    boolean hasSavepoint();// 是否有保存点
+
+    void setRollbackOnly();// 
+
+    boolean isRollbackOnly();
+
+    void flush();
+
+    boolean isCompleted();// 事务是否完成
+}
+```
+
+
 
 # 2. 接口实现类的选择
 
@@ -113,3 +113,6 @@ public interface PlatformTransactionManager {
 
   **mysql 默认是 `REPEATABLE-READ` 重复读**
 
+## 事务传播行为
+
+![1540983454912](E:\文档\study-note\spring\assets\1540983454912.png)
