@@ -883,7 +883,7 @@ public class AopByAnnotationTest extends UnitTestBase {
 
 #### `如何给`advice`传参数` 以及 argNames
 
-**将待织入的方法参数传递给advice, 如果在args表达式中使用参数名称代替类型名称，则在调用通知时，相应参数的值将作为参数值传递。** 我们看一个例子
+**将待织入的方法参数传递给advice, 如果在args表达式(6.2.3 中还有别的表达式也可以)中使用参数名称代替类型名称，则在调用`advice`时，相应参数的值将作为参数值传递。** 我们看一个例子
 
 advice
 
