@@ -98,3 +98,4 @@ public interface PlatformTransactionManager {
 * 持久化机制是`Jdo` 的时候：我们要选择 `org.springframework.jdo.JdoTransactionManager`
 
 别的情况下，悬着对应的实现就可以了。
+
