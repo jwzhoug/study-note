@@ -56,7 +56,7 @@
 # 4.Spring AOP 的功能和目标
 
 1. Spring AOP是用纯Java实现的。不需要特殊的编译过程。Spring AOP不需要控制类加载器层次结构，因此适合在Servlet容器或应用程序服务器中使用。
-2. Spring AOP目前仅支持方法执行连接点（建议在Spring bean上执行方法）。虽然可以在不破坏核心Spring AOP API的情况下添加对字段拦截的支持，但未实现字段拦截**。如果您需要建议字段访问和更新连接点，请考虑使用AspectJ等语言。**
+2. Spring AOP目前仅支持方法执行连接点（建议在Spring bean上执行方法）。虽然可以在不破坏核心Spring AOP API的情况下添加对字段拦截的支持，但未实现字段拦截。**如果您需要建议字段访问和更新连接点，请考虑使用AspectJ等语言。**
 3. Spring AOP的AOP方法与大多数其他AOP框架的方法不同。目的**不是提供最完整的AOP实现**（尽管Spring AOP非常强大）; 它是在AOP实现和Spring IoC之间提供紧密集成，以帮助解决企业应用(不光能在企业应用中使用)程序中的常见问题。
 4. Spring AOP永远不会与AspectJ竞争提供全面的AOP解决方案。spring开发团队相信像Spring AOP这样的基于代理的框架和像AspectJ这样的完整框架都很有价值，而且它们是互补的，而不是竞争。**Spring将Spring AOP和IoC与AspectJ无缝集成，以便在一致的基于Spring的应用程序架构中满足AOP的所有使用需求。此集成不会影响Spring AOP API或AOP Alliance API：Spring AOP保持向后兼容。**有关Spring AOP API的讨论，请参阅https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-api。
 
