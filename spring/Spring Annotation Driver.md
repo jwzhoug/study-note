@@ -381,7 +381,9 @@ public class AutoWiredDemo {
 
 
 
-## 1.8 @ImportResource
+## 1.8 导入外部资源
+
+## 1.8.1 @ImportResource
 
 使用` @ImportResource`注解配合 `@Value`注解，可以实现读取资源文件中的key对应的value值
 
@@ -443,6 +445,10 @@ jdbc.username=root
 jdbc.password=116611 
 jdbc.url=jdbc:mysql://localhost:3306/train?useUnicode=true&amp;characterEncoding=UTF-8
 ```
+
+## 1.8.2 @PropertySource
+
+用法和上面的一样，不过他是直接针对的 properties文件，这样就不用写上面的 importResourceDemo.xml 文件了
 
 ## 1.9 JSR 250
 
