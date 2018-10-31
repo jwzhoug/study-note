@@ -931,14 +931,14 @@ public class AopByAnnotationTest extends UnitTestBase {
 }    
 ```
 
-**`args(m1,m2)`**，**表达式中的内容就是 advice方法的两个参数，一定要和匹配的连接点法方法参数名相同**，这样写了之后 下面的代码执行过程中  这个`m1 = ' hello' , m2 = ' world' `；最后的执行结果 就是将 m1.m2的值传给方法对应的参数 结果就是：
+**`args(m1,m2)`**，**表达式中的内容就是 advice方法的两个参数，一定要和匹配的连接点法方法参数名相同**，这样写了之后 下面的代码执行过程中  这个`m1 = ' hello' , m2 = ' world' `；最后的执行结果 就是将 m1.m2的值传给方法对应的参数 `sayHello("hello","world")` 结果就是：
 
 ```
  hello  hello  world 
  猴子 上树  hello  world 
 ```
 
- 如果你写成 `args(m2,m1) `  那就是 ` message2 = ' hello' , message = ' world'，那么最后的执行结果就是
+ 如果你写成 `args(m2,m1) `  那就是 ` m2 = ' hello' , m1 = ' world'` 也就是 `sayHello("world","hello")` ,执行结果就是
 
 ```
 hello  world  hello 
