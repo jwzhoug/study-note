@@ -843,7 +843,7 @@ public class MyAspect {
     @Around("execution(* com.stu.springdemo.aop.annotation.testPo.Monkey.process())")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         System.out.println(" around 1 ");
-        Object retVal = pjp.proceed();// retVal 被织入的方法执行之后的返回值
+        Object retVal = pjp.proceed();// retVal 是被织入的方法执行之后的返回值
         System.out.println(" around 2 ");
         System.out.println(" ProceedingJoinPoint pjp = "+retVal);
         return retVal;
