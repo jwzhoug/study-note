@@ -472,7 +472,7 @@ within(com.xyz.service..*)
 ```java
 public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
    // 在连接点前 做点什么
-    Object retVal = pjp.proceed();// 这里相当于调用 我们实际的方法（连接点）
+    Object retVal = pjp.proceed();//这里调用我们实际的方法（连接点）
    // 在连接点后 做点什么
     return retVal;
 }
