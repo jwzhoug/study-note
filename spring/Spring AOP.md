@@ -305,13 +305,13 @@ args(java.lang.String,..,java.lang.Integer)
 
   匹配粒度_——类，其参数为全路径的类名（可使用通配符）。 （这个表达式仅在 Spring AOP 使用 ） 
 
-* 服务包中的任何连接点：
+* 匹配`service`中的任何类的方法：
 
 ```java
 within(com.xyz.service.*)
 ```
 
-- 服务包或子包中的任何连接点：	
+- `service`包或它的子包中的任何方法：	
 
 ```java
 within(com.xyz.service..*)
