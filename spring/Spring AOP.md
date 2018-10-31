@@ -124,8 +124,6 @@ public class AppConfig {
 
 **使用XML配置启用@AspectJ支持**
 
-要使用基于XML的配置启用@AspectJ支持
-
 ```xml
 <aop:aspectj-autoproxy/>
 ```
