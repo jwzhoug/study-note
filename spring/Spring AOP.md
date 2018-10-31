@@ -112,7 +112,7 @@ xml方式不支持
 
 **他可能包含方法和字段。还可能包含`PointCut`，`Advice`和`Introdution`声明。** 
 
-**使用Java启用@AspectJ支持**
+#### **使用Java启用@AspectJ支持**
 
 ```java
 @Configuration
@@ -122,13 +122,13 @@ public class AppConfig {
 }
 ```
 
-**使用XML配置启用@AspectJ支持**
+#### **使用XML配置启用@AspectJ支持**
 
 ```xml
 <aop:aspectj-autoproxy/>
 ```
 
-#### 切面的实例化模型
+#### **切面的实例化模型**
 
 Spring支持AspectJ的`perthis`和`pertarget` 实例化模型（`percflow, percflowbelow,`和`pertypewithin`目前不支持）。 这两种模型的功能 具体的百度吧，我也不是很理解，也没用过。
 
