@@ -173,11 +173,11 @@ Spring支持AspectJ的`perthis`和`pertarget` 实例化模型（`percflow, perc
 private void anyOldTransfer() {...}
 
 @Pointcut("com.xyz.myapp.SystemArchitecture.dataAccessOperation() && args(account)")
-private void accountDataAccessOperation(Account account) {}
+private void accountDataAccOpt(Account account) {}
 
 
 //advice中使用的例子 
-@Before("accountDataAccessOperation(account)")
+@Before("accountDataAccOpt(account)")
 public void validateAccount(Account account) {
     // ...
 }
