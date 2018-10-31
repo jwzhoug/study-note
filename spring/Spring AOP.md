@@ -402,7 +402,7 @@ within(com.xyz.service..*)
 </aop:aspect>
 ```
 
-method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://www.cnblogs.com/ssslinppp/p/4633496.html
+带有 `returnning`属性指定的参数的方式，可以参考这个博客的使用方式https://www.cnblogs.com/ssslinppp/p/4633496.html
 
 ```xml
 <aop:aspect id="afterReturningExample" ref="aBean">
@@ -432,7 +432,7 @@ method 指定的方法带有 returnning指定的参数的方式，可以参考�
 </aop:aspect>
 ```
 
-method 指定的方法带有 returnning指定的参数的方式，可以参考这个博客的使用方式https://blog.csdn.net/owen_william/article/details/50812780
+带有`throwing`属性指定的参数的方式，可以参考这个博客的使用方式https://blog.csdn.net/owen_william/article/details/50812780
 
 ```xml
 
