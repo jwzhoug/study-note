@@ -28,7 +28,7 @@ public interface PlatformTransactionManager {
 }
 ```
 
-* `TransactionDefinition`: 事务的一些定义信息的顶层接口（传播，隔离，超时，只读），不理解隔离,传播..的读者可以自己去查找相关资料
+* `TransactionDefinition`: 事务的一些定义信息的顶层接口（事务传播，事务隔离级别，事务超时，事务只读），不理解隔离级别的读者可以自己去查找相关资料
 
   ```java
   public interface TransactionDefinition {
@@ -98,4 +98,18 @@ public interface PlatformTransactionManager {
 * 持久化机制是`Jdo` 的时候：我们要选择 `org.springframework.jdo.JdoTransactionManager`
 
 别的情况下，悬着对应的实现就可以了。
+
+# 基本概念补充
+
+## 隔离级别
+
+- `Serializable` (序列化，串行化) : 串行执行 可避免脏读，不可重复读，幻读的发生。它是最高的事务隔离级别，同事花费的代价也是很大的，性能很低，一般很少使用。
+
+- `Repeatable read` (重复读) :一个事务开始读取这条数据，那么别的事务就不能对其进行修改。 可以解决不可重复读和脏读，不能避免幻读，**但是`mysql`中的 `mvcc `可以避免幻读,这样就不需要升级隔离级别了**
+
+- `Read committed` (读已提交): 一个事物要等另一个事务提交之后才能读取 可避免脏读 
+
+- `Read uncommitted`(读未提交) 
+
+  **mysql 默认是 `REPEATABLE-READ` 重复读**
 
