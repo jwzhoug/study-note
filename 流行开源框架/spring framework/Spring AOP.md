@@ -7,7 +7,7 @@
 * **预编译**：主要代表有 AspecJ
 * **动态代理**: springAOP , JbossAOP
 
-**spring 中主实现方式是通过动态代理实现的，动态代理又主要包含两种方式：**
+**spring 中主要实现方式是通过动态代理实现的，动态代理又主要包含两种方式：**
 
 * **jdk的动态代理**
 * **第三方包 cglib**
@@ -41,7 +41,7 @@
   * `after throwing advice`: 如果方法是抛出异常退出，则执行 `Advice`
   * `after (finally) advice`: 无论`JoinPoint`退出的方式（正常或异常返回），都要执行`Advice` 
 
-  **许多AOP框架（包括Spring）将建议建模为*拦截器*，在连接点周围维护一系列拦截器。** 
+  **许多AOP框架（包括Spring）将`Advice`建模为*拦截器*，在连接点周围维护一系列拦截器。** 
 
 * **切入点（`PointCut`）**: 匹配连接点的断言，`Advice`与`PointCut`表达式相关联，并在`PointCut`匹配的任何`JoinPoint`处运行，**也就是说 `Pointcut`是`JoinPoint`的集合，它是程序中需要注入`Advice` 的位置的集合，指明`Advice`要在什么样的条件下才能被触发。`org.springframework.aop.Pointcut `接口用来指定到特定的类和方法。**
 
