@@ -311,7 +311,7 @@ args(java.lang.String,..,java.lang.Integer)
 within(com.xyz.service.*)
 ```
 
-- `service`包或它的子包中的任何方法：	
+- `service`包或它的子包中任意类的任何方法：	
 
 ```java
 within(com.xyz.service..*)
