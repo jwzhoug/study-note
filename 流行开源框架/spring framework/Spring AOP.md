@@ -239,7 +239,7 @@ execution(* com.xyz.service.AccountService.*(..))
 execution(* com.xyz.service.*.*(..))
 ```
 
-- 执行service包或子包中定义的任何方法：
+- 执行service包或子包中任一类定义的任何方法：
 
 ```java
 execution(* com.xyz.service..*.*(..))
