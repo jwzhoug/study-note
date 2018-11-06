@@ -115,4 +115,4 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 
 ## 事务传播行为
 
-![1540983454912](https://github.com/Alan-Jun/study-note/tree/master/%E6%B5%81%E8%A1%8C%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/spring%20framework/assets/1540983454912.png)
+![1540983454912](https://github.com/Alan-Jun/study-note/blob/master/%E6%B5%81%E8%A1%8C%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/spring%20framework/assets/1540983454912.png)
