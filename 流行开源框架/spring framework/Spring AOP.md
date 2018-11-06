@@ -1070,7 +1070,7 @@ aspect
 @Aspect
 public class MyAspect {
 
-    @DeclareParents(value="com.stu.springdemo.aop.annotation.testPo.Monkey", 		defaultImpl=Elephant.class)
+    @DeclareParents(value="com.stu.springdemo.aop.annotation.testPo.Monkey",defaultImpl=Elephant.class)
     public static Animal animal;
   
 }
