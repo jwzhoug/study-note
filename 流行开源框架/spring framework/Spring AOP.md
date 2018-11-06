@@ -254,7 +254,7 @@ execution(* com.xyz.service..*.*(..))
 ```java
 args(java.io.Serializable)
 ```
-* 可以使用通配符，但这里通配符只能使用..，而不能使用*。如下是使用通配符的实例，该切点表达式将匹配第一个参数为`java.lang.String`，最后一个参数为`java.lang.Integer`，并且中间可以有任意个数和类型参数的方法： 
+* 可以使用通配符，但这里通配符只能使用 .. ，而不能使用 * 。如下是使用通配符的实例，该切点表达式将匹配第一个参数为`java.lang.String`，最后一个参数为`java.lang.Integer`，并且中间可以有任意个数和类型参数的方法： 
 
 ```java
 args(java.lang.String,..,java.lang.Integer)
