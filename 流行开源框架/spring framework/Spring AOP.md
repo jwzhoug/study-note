@@ -69,8 +69,8 @@
 
 # 5.Spring AOP的底层实现原理
 
-* Spring AOP 默认使用AOP代理的标准JDK ***动态*代理**。这使得任何接口（或接口集）都可以被代理。 
-* Spring AOP也可以使用CGLIB代理。这是代理类而不是接口所必需的。如果业务对象未实现接口，则默认使用CGLIB。 
+* Spring AOP 默认使用AOP代理的标准 `JDK 动态代理`。这使得任何接口（或接口集）都可以被代理。 
+* Spring AOP也可以使用`CGLIB`代理。这是代理类而不是接口所必需的。如果业务对象未实现接口，则默认使用CGLIB。 
 
 # 6.spring 具体的使用方式
 
@@ -106,7 +106,7 @@ xml方式不支持
 
 修饰在类上，注意这个类同时需要用到`@Component` 注解，因为这个`@Aspect`注解不能通过类路径自动检测来发现（当然你也可以在xml配置这个bean,来达到使用 `@Component`注解的效果）
 
-关于注解方面的内容可以查看我的另一篇文章[spring 注解驱动](https://github.com/Alan-Jun/study-note/blob/master/spring/Spring%20Annotation%20Driver.md)
+关于spring基础的注解方面的内容可以查看我的另一篇文章[spring 注解驱动](https://github.com/Alan-Jun/study-note/blob/master/spring/Spring%20Annotation%20Driver.md)
 
 `@Aspect`和 xml 配置的方式是相同的功能，不过是通过注解在类上来实现了。
 
