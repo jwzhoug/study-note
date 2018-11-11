@@ -245,6 +245,14 @@ execution(* com.xyz.service.*.*(..))
 execution(* com.xyz.service..*.*(..))
 ```
 
+- `AccountService`	和其子类的任何方法
+
+```java
+execution(* com.xyz.service.AccountService+.*(..))
+```
+
+
+
 #### `args` 
 
 常用于给`advice`传参数的模式，匹配粒度——方法参数 （这个表达式仅在 Spring AOP 使用） 
