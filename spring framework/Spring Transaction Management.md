@@ -116,3 +116,74 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 ## 事务传播行为
 
 ![1540983454912](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1540983454912.png)
+
+# 声明式事务管理
+
+## 1. 配置代理的方式
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--<context:component-scan base-package="com.stu" />-->
+
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--service-->
+    <bean id="accountService" class="com.stu.service.imp.AccountServiceImp">
+        <property name="accountDao" ref="accountDao"/>
+    </bean>
+
+    <!--dao层-->
+    <bean id="accountDao" class="com.stu.dao.imp.AccounDaoImp">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 事务管理类 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置service 层代理 -->
+    <bean id="accountServiceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <!--配置目标对象-->
+        <property name="target" ref="accountService"/>
+        <!--注入事务管理器-->
+        <property name="transactionManager" ref="transactionManager"/>
+        <!-- 注入事务的属性 -->
+        <property name="transactionAttributes" >
+            <!-- 下面的配置 查看  TransactionProxyFactoryBean 的源码 就可以看到配置-->
+            <props>
+                <!--格式  key是方法，可以使用通配符 *-->
+                <!-- prop 内是value的值，使用 ， 号分割，按顺序是
+                    1. PROPAGATION 事务的传播行为
+                    2. ISOLATION 事务的隔离级别
+                    3. ReadOnly 只读（不能进行任何修改操作）
+                    4. +Exception  发生哪一类的异常，我们照常提交
+                    5. -Exception  发生哪一类的异常，回滚事务
+                    -->
+                <prop key="transfer">PROPAGATION_REQUIRED</prop>
+                <!--
+                    <prop key="transfer">PROPAGATION_REQUIRED,
+											+java.lang.ArithmeticException</prop>
+                    这样写了 可以发现即使发生上述的异常 ，但是异常发生前的 数据库操作，被提交了
+                    -->
+            </props>
+        </property>
+    </bean>
+
+</beans>
+```
+
