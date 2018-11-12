@@ -177,7 +177,7 @@ public interface TransactionStatus extends SavepointManager, Flushable {
                 <prop key="transfer">PROPAGATION_REQUIRED</prop>
                 <!--
                     <prop key="transfer">PROPAGATION_REQUIRED,
-											+java.lang.ArithmeticException</prop>
++java.lang.ArithmeticException</prop>
                     这样写了 可以发现即使发生上述的异常 ，但是异常发生前的 数据库操作，被提交了
                     -->
             </props>
