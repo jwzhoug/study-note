@@ -34,7 +34,7 @@
 </beans>
 ```
 
-* `<context:annotation-config></context:annotation-config>`  这个标签只能在bean注册之后，费用与发现类中属性或则方法等的注解。
+* `<context:annotation-config></context:annotation-config>`  这个标签只能在bean注册之后，发现类中属性或则方法等的注解。
 
 **总结**：推荐使用上面第一种方式。不推荐使用`<context:annotation-config></context:annotation-config>`
 
@@ -96,7 +96,7 @@ public @interface Service {
 * `@Controller` ：常用于Controller类（控制层）
 * 以及各种用`@Component`修饰的注解（包括自定义的注解），相当于他的子注解
 
-## 1.3 作用方法的注解 `@Bean`
+## 1.3`@Bean` 作用方法的注解 
 
 这个注解需要搭配 `@Configuration`注解使用，当然也可以搭配通用的`@Component`注解使用,效果和XMl中配置的效果类似，但是少了部分功能，这部分功能需要使用 别的注解来补充（这些注解后续会有介绍）
 
@@ -246,7 +246,7 @@ public class BeanAnnotation {
 ```xml
 <context:component-scan base-package="xxx.xxx.xxx" name-generator="xxx.xxx.MyScopeMetaDataResolverr"/>
 ```
-## 1.6 自动装配 @AutoWired
+## 1.6 `@AutoWired `自动装配
 
 ```java
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
@@ -320,9 +320,9 @@ public @interface Autowired {
     	private Map<String,Person> personMap;
     	
     	@Autowired
-        public void setPersons(List<Person> persons) {
-            this.persons = persons;
-        }
+      public void setPersons(List<Person> persons) {
+          this.persons = persons;
+      }
     }
     ```
     **如果希望按特定顺序对数组或列表中的项进行排序，则目标bean可以实现`org.springframework.core.Ordered`接口或使用`@Order`或标准`@Priority`注释。否则，它们的顺序将遵循容器中相应目标bean定义的注册顺序。** 
