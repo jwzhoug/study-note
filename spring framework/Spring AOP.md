@@ -1142,6 +1142,8 @@ public class AopByAnnotationTest extends UnitTestBase {
 
 ## 6.5 advisor
 
+这个主要是在事务管理中使用，` aspect`可以配置多个`advice`,  `advisor` 配置配置一个`advice`并且对应一个`PointCut`
+
 # 6.6 spring AOP API
 
 这事Spring AOP 的基础。https://docs.spring.io/spring/docs/5.0.7.RELEASE/spring-framework-reference/core.html#aop-api  有需要的时候请仔细阅读 官文的这部分内容
