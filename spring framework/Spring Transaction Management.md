@@ -923,6 +923,8 @@ public class AccountServiceImp implements AccountService {
 
 **Spring团队建议您使用注释仅注释具体类（以及具体类的方法）`@Transactional`，而不是注释接口或接口方法，因为那样只有在使用基于接口的代理时它才会生效**。
 
+**@Transactional `注解应该只被应用到 `public` 方法上，这是由` Spring AOP `的本质决定的。如果你在 `protected`、`private `或者默认可见性的方法上使用` @Transactional `注解，这将被忽略，也不会抛出任何异常**。
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -993,6 +995,8 @@ public class AccountServiceImp implements AccountService {
 ```
 
 ### 作用于方法
+
+`@Transactional `注解应该只被应用到 `public` 方法上，这是由` Spring AOP `的本质决定的。如果你在 `protected`、`private `或者默认可见性的方法上使用` @Transactional `注解，这将被忽略，也不会抛出任何异常。
 
 ```java
 public class AccountServiceImp implements AccountService {
