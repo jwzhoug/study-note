@@ -151,7 +151,7 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 
 数据表：
 
-![1542073400223](E:\文档\study-note\spring framework\assets\1542073400223.png)
+![1542073400223](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073400223.png)
 
 Repository 层的方法：我们给相应的方法都加上 `PROPAGATION_REQUIRED`
 
@@ -253,13 +253,13 @@ public class AccountServiceImp implements AccountService {
 
 执行方法1的结果：
 
-![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+![1542073652363](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073652363.png)
 
 **两个方法正常执行，并且事务被提交**
 
 执行方法2的结果：
 
-![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+![1542073851874](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073851874.png)
 
 **抛出异常的方法的事务回滚了**
 
@@ -332,19 +332,19 @@ public class AccountServiceImp implements AccountService {
 
 执行方法1的结果：
 
-![1542074660108](E:\文档\study-note\spring framework\assets\1542074660108.png)
+![1542074660108](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542074660108.png)
 
 **数据没有任何变化，事务回滚了所有操作**
 
 执行方法2的结果：
 
-![1542074660108](E:\文档\study-note\spring framework\assets\1542074660108.png)
+![1542074660108](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542074660108.png)
 
 **数据也没有任何变化，事务回滚了所有操作**
 
 执行方法3的结果：
 
-![1542074660108](E:\文档\study-note\spring framework\assets\1542074660108.png)
+![1542074660108](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542074660108.png)
 
 控制台输出：
 
@@ -449,13 +449,13 @@ public class AccountServiceImp implements AccountService {
 
 执行方法1的结果：
 
-![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+![1542073652363](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073652363.png)
 
 **两个方法正常执行，并且事务被提交**
 
 执行方法2的结果：
 
-![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+![1542073851874](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073851874.png)
 
 **抛出异常的方法的事务回滚了**
 
@@ -524,19 +524,19 @@ public class AccountServiceImp implements AccountService {
 
 执行方法1的结果：
 
-![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+![1542073652363](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073652363.png)
 
 **两个方法正常执行，并且事务被提交**
 
 执行方法2的结果：
 
-![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+![1542073851874](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073851874.png)
 
 **抛出异常的方法的事务回滚了**
 
 执行方法3的结果：
 
-![1542074660108](E:\文档\study-note\spring framework\assets\1542073851874.png)
+![1542074660108](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073851874.png)
 
 控制台输出：
 
@@ -642,13 +642,13 @@ public class AccountServiceImp implements AccountService {
 
 执行方法1的结果：
 
-![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+![1542073652363](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073652363.png)
 
 **两个方法正常执行，并且事务被提交**
 
 执行方法2的结果：
 
-![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+![1542073851874](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073851874.png)
 
 **抛出异常的方法的事务回滚了**
 
@@ -740,19 +740,19 @@ public class AccountServiceImp implements AccountService {
 
 执行方法1的结果：
 
-![1542073652363](E:\文档\study-note\spring framework\assets\1542074660108.png)
+![1542073652363](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542074660108.png)
 
 **外部方法异常回滚，内部方法也全部回滚**
 
 执行方法2的结果：
 
-![1542073851874](E:\文档\study-note\spring framework\assets\1542074660108.png)
+![1542073851874](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542074660108.png)
 
 **抛出异常的方法的事务回滚了，由于外部方法没有捕获该内部方法异常，所以全部回滚了**
 
 执行方法3的结果：
 
-![1542074660108](E:\文档\study-note\spring framework\assets\1542073851874.png)
+![1542074660108](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073851874.png)
 
 控制台输出：
 
@@ -766,7 +766,7 @@ public class AccountServiceImp implements AccountService {
 
 执行方法4的结果：
 
-![1542074660108](E:\文档\study-note\spring framework\assets\1542073652363.png)
+![1542074660108](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1542073652363.png)
 
 控制台输出：
 
