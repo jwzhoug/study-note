@@ -854,3 +854,254 @@ public class AccountServiceImp implements AccountService {
 </beans>
 ```
 
+## 4.2 aop 的方式
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!--<context:component-scan base-package="com.stu" />-->
+
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--service-->
+    <bean id="accountService" class="com.stu.service.imp.AccountServiceImp">
+        <property name="accountDao" ref="accountDao"/>
+    </bean>
+
+    <!--dao层-->
+    <bean id="accountDao" class="com.stu.dao.imp.AccounDaoImp">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 事务管理类 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置事务的advice transaction-manager="" 不写默认就是 transaction-manager="transactionManager" -->
+    <tx:advice id="testAdvice" transaction-manager="transactionManager">
+        <!-- 配置事务相关的属性 -->
+        <tx:attributes>
+            <!-- prop 内是value的值，使用 ， 号分割，按顺序是
+                    1. propagation 事务的传播行为
+                    2. isolation 事务的隔离级别
+                    3. read-only 只读（不能进行任何修改操作）
+                    4. rollback-for  发生哪一类的异常，回滚事务
+                    5. no-rollback-for  发生哪一类的异常，我们照常提交
+                    6. timeout 超时配置
+                    -->
+            <tx:method name="trans*" propagation="REQUIRED" rollback-for="java.lang.ArithmeticException"/>
+        </tx:attributes>
+    </tx:advice>
+    <!-- 配置切面-->
+    <aop:config>
+        <aop:advisor advice-ref="testAdvice" pointcut="execution(* com.stu.service.interf.AccountService+.*(..))" />
+    </aop:config>
+</beans>
+```
+
+## 4.3 @Transactional 注解的方式
+
+**可以作用于接口、接口方法、类以及类方法上**
+
+**使用这个注解需要注意要使用 `<tx:annotation-driven/>`元素将打开事务行为**。
+
+**Spring团队建议您使用注释仅注释具体类（以及具体类的方法）`@Transactional`，而不是注释接口或接口方法，因为那样只有在使用基于接口的代理时它才会生效**。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!--<context:component-scan base-package="com.stu" />-->
+
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--service-->
+    <bean id="accountService" class="com.annotation.service.imp.AccountServiceImp">
+        <property name="accountDao" ref="accountDao"/>
+    </bean>
+
+    <!--dao层-->
+    <bean id="accountDao" class="com.annotation.dao.imp.AccounDaoImp">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 事务管理类 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 开启注解事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>
+```
+
+然后在你想管理的类上，或则方法上加上这个注解
+
+### 作用于类上
+
+比如：该类的所有 public 方法将都具有该类型的事务属性
+
+```java
+@Transactional(propagation = Propagation.REQUIRED,rollbackFor = {Exception.class})
+public class AccountServiceImp implements AccountService {
+
+    private AccountDao accountDao;
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    @Override
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        int a =  1 / 0 ;
+        accountDao.inMoney(inAccount,money);
+    }
+}
+```
+
+### 作用于方法
+
+```java
+public class AccountServiceImp implements AccountService {
+
+    private AccountDao accountDao;
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    @Override
+  @Transactional(propagation = Propagation.REQUIRED,rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        int a =  1 / 0 ;
+        accountDao.inMoney(inAccount,money);
+    }
+}
+```
+
+## 4.4 如果你不想使用过多的xml配置
+
+我们可以使用基于注解驱动的方式来使用`spring`
+
+**下面的配置还是必须的**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:component-scan base-package="com.all_by_annotation" />
+    <!-- 开启注解事务 -->
+    <tx:annotation-driven transaction-manager=""/>
+
+</beans>
+```
+
+上面的xml配置中的大量内容就变成了这样
+
+```java
+@Configuration
+@PropertySource("classpath:jdbc.properties")
+public class JdbcConfig {
+
+    @Value("${jdbc.driverClass}")
+    private String driverClass;
+
+    @Value("${jdbc.username}")
+    private String userName;
+
+    @Value("${jdbc.password}")
+    private String passWord;
+
+    @Value("${jdbc.url}")
+    private String jdbcUrl;
+
+    @Bean("dataSource")
+    public ComboPooledDataSource getComboPooledDataSource() throws PropertyVetoException {
+        ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
+        comboPooledDataSource.setDriverClass(driverClass);
+        comboPooledDataSource.setJdbcUrl(jdbcUrl);
+        comboPooledDataSource.setUser(userName);
+        comboPooledDataSource.setPassword(passWord);
+        return comboPooledDataSource;
+    }
+
+    @Bean("transactionManager")
+    @Resource(name = "dataSource")
+    public DataSourceTransactionManager getTransactionManager(DataSource dataSource){
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource(dataSource);
+        return transactionManager;
+    }
+
+    @Bean
+    @Resource(name = "dataSource")
+    public JdbcTemplate getJdbcTemplate(DataSource dataSource){
+        return new JdbcTemplate(dataSource);
+    }
+}
+```
+
+需要进行事务管理的方法姐可以这样使用了
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+
+    @Resource(name = "accountDao")
+    private AccountDao accountDao;
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount, money);
+        accountDao.inMoney(inAccount, money);
+    }
+}
+```
