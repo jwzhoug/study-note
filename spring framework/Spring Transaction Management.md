@@ -99,9 +99,9 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 
 别的情况下，悬着对应的实现就可以了。
 
-# 基本概念补充
+# 3. 基本概念补充
 
-## 隔离级别
+## 3. 隔离级别
 
 - `Serializable` (序列化，串行化) : 串行执行 可避免脏读，不可重复读，幻读的发生。它是最高的事务隔离级别，同事花费的代价也是很大的，性能很低，一般很少使用。
 
@@ -113,23 +113,23 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 
   **mysql 默认是 `REPEATABLE-READ` 重复读**
 
-## 事务传播行为
+## 3.2 事务传播行为
 
-* 第一类：外围事务开启的情况下，这一类方法会加入到外围方法的事务中。
+* 第一类：外围事务开启的情况下，被这一类修饰的方法会加入到外围方法的事务中。
 
 | 事务传播行为类型      | 说明                                                         |
 | --------------------- | ------------------------------------------------------------ |
 | PROPAGATION_REQUIRED  | 1.  在外围方法未开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会使用自己的事务，且事务相互独立，互不干扰。<br/>2. 在外围方法开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会加入到外围方法的事务中，所有`Propagation.REQUIRED`修饰的内部方法和外围方法均属于同一事务，只要一个方法异常，整个事务均回滚 |
 | PROPAGATION_SUPPORTS  | 1.  在外围方法未开启事务的情况下，`Propagation.SUPPORTS`修饰的方法，以非事务的方式执行<br/>2. 在外围方法开启事务的情况下`Propagation.SUPPORTS`修饰的内部方法会加入到外围方法的事务中，所有`Propagation.SUPPORTS`修饰的内部方法和外围方法均属于同一事务，只要一个方法异常，整个事务均回滚<br/>也就是说完全以外围方法为主 |
-| PROPAGATION_MANDATORY | 使用当前的事务，如果当前没有事务，就抛出异常。               |
+| PROPAGATION_MANDATORY | 1.  如果当前没有事务，就抛出异常。<br/>2.  同上              |
 
-* 第二类：
+* 第二类：被这一类修饰的方法不管外围方法是否有事务，都开启自己的独立的事务，且内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。
 
 | 事务传播行为类型          | 说明                                                         |
 | ------------------------- | ------------------------------------------------------------ |
 | PROPAGATION_REQUIRES_NEW  | 不管外围方法是否开启事务，`Propagation.REQUIRES_NEW`修饰的内部方法都会单独开启自己的独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。 |
-| PROPAGATION_NOT_SUPPORTED | 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。   |
-| PROPAGATION_NEVER         | 以非事务方式执行，如果当前存在事务，则抛出异常。             |
+| PROPAGATION_NOT_SUPPORTED | 以非事务方式执行操作                                         |
+| PROPAGATION_NEVER         | 以非事务方式执行<br/>如果当前存在事务，则抛出异常。          |
 * 第三类：
 
 | 事务传播行为类型          | 说明                                                         |
@@ -784,9 +784,9 @@ public class AccountServiceImp implements AccountService {
 
 **结论：以上试验结果我们证明在外围方法开启事务的情况下`Propagation.NESTED`修饰的内部方法属于外部事务的子事务，外围主事务回滚，子事务一定回滚，而内部子事务可以单独回滚而不影响外围主事务和其他子事务**。
 
+# 4. 声明式事务管理
 
-
-## 1. 配置代理的方式
+## 4.1  配置代理的方式
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
