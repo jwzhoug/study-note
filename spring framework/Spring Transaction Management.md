@@ -138,7 +138,7 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 
 **事务的传播行为，主要看内层方法的事务传播行为是什么样的，它决定了怎么去传播**
 
-**下面我们主要看一下每一类的第一种类型的详细介绍，别的都相识，可以自己去测试**
+**下面我们主要看一下每一类的第一种类型的详细介绍，别的都相似，可以自己去测试**
 
 ### PROPAGATION_REQUIRED
 
