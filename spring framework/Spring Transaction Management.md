@@ -128,8 +128,8 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 | 事务传播行为类型          | 说明                                                         |
 | ------------------------- | ------------------------------------------------------------ |
 | PROPAGATION_REQUIRES_NEW  | 不管外围方法是否开启事务，`Propagation.REQUIRES_NEW`修饰的内部方法都会单独开启自己的独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。 |
-| PROPAGATION_NOT_SUPPORTED | 以非事务方式执行操作                                         |
-| PROPAGATION_NEVER         | 以非事务方式执行<br/>如果当前存在事务，则抛出异常。          |
+| PROPAGATION_NOT_SUPPORTED | 不管外围方法是否开启事务都以非事务方式执行操作               |
+| PROPAGATION_NEVER         | 以非事务方式执行<br/>如果外围方法存在事务，则抛出异常。      |
 * 第三类：
 
 | 事务传播行为类型          | 说明                                                         |
