@@ -1107,3 +1107,5 @@ public class AccountServiceImp implements AccountService {
 ```
 
 **当然在springboot当中会有一些新的东西，详情请看我关于spring boot 使用的说明**
+
+更多内容可以查看spring官网的详情：https://docs.spring.io/spring/docs/5.1.2.RELEASE/spring-framework-reference/data-access.html#transaction-declarative-annotations
