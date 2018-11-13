@@ -5,7 +5,7 @@
 # JVM类加载以及SPI
 
 ## 类的生命周期：
-![img](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606337616.png)
+![img](assets/1539606337616.png)
 
 **说明：只有加载阶段用户可以通过自定义类加载器参与，别的阶段都是虚拟机自己主导的**
 
@@ -71,7 +71,7 @@
 
 * 模型图：
 
-![img](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606408458.png)
+![img](assets/1539606408458.png)
 
 - 双亲委派的作用是什么呢？
 
@@ -79,7 +79,7 @@
 
 需要注意的时候 除了 Bootstrap ClassLoader 之外别的类加载器都应该有自己的父类加载器，这些类加载器的**父子关系不是以继承关系实现的，都是使用组合关系实现。**
 
-![img](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606420061.png)
+![img](assets/1539606420061.png)
 
 从上图su.msic.Launcher类中也可已看出他们两并不是继承的关系而是组合的关系
 
@@ -276,21 +276,21 @@ public class ClassLoaderDemo {
 SPI 是JDK 内置的服务发现机制，出现于双亲委派模式第二次被“破坏“时候，因为双亲委派模式虽然很好的解决了各类加载器的基础类的统一问题，但是当你JDK定义的基础类需要去调用（加载）对应的自适应性扩展的类的时候，双亲委派就无法实现了。
 
 ​         简单来说比如上面说的JDK定义的基础类比如是一个定义好的接口，但是这个接口的实现不是由JDK 开发者来实现的，他们只是定义了这样一个标准，具体的实现需要根据不厂商的不同情况各自去实现他的内容，这样的话我怎么去发现（加载）这些实现类呢？很显然双亲委派无法实现，他只是用来保证基类的统一的。
-    当然你可以扫描classpath 下面所有的class 与 jar 中的class 然后用ClassLoader 加载 ，然后再判断是否是给定借口的实现。但是 很明显这是一种非常非常影响性能的实现。
+​    当然你可以扫描classpath 下面所有的class 与 jar 中的class 然后用ClassLoader 加载 ，然后再判断是否是给定借口的实现。但是 很明显这是一种非常非常影响性能的实现。
 
 针对这样的问题，那么我们肯定要去解决它，所以SPI 出现了。
-    jdk 中提供了一个 ServiceLoader<T> 的一个类加载器（这个类加载器的源码很简单这里就不细说了，有兴趣的可以自己去看看） 来实现这种服务发现 ，你只需要根据他的规定在 根目录（Classpath）创建一个META-INF/service目录。然后在下面创建一个以接口全路径命名的文件，在里面写上你的实现了的全路径就可以了
+​    jdk 中提供了一个 ServiceLoader<T> 的一个类加载器（这个类加载器的源码很简单这里就不细说了，有兴趣的可以自己去看看） 来实现这种服务发现 ，你只需要根据他的规定在 根目录（Classpath）创建一个META-INF/service目录。然后在下面创建一个以接口全路径命名的文件，在里面写上你的实现了的全路径就可以了
 如果是多个实现，那就分行写（一行写一个实现的全路径名）
 
 典型的例子是，JDBC,我想这个是每一个java 程序开发者都接触过的东西，JDK 中定义了相关的Driver的Interface,相关的厂商来做对应的实现，比如Mysql 实现了自己的驱动，Oracel 也实现了自己的驱动，使用的时候 只需要我们加载对应的驱动就可以了。/
 
 为了证明我所说的，我准备了pgsql 驱动包的截图 :                              
 
-![img](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606674692.png)
+![img](assets/1539606674692.png)
 
 以及java.sql.Driver接口的路径截图
 
-![1539606698463](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606698463.png)
+![1539606698463](assets/1539606698463.png)
 
 很明显了吧，Driver类是在rt.jar 中定义的service 接口，不同的数据库厂商，会有他们对应的实现，而这些实现的感知就是通过jdk 定义的SPI 机制，这是一种定义规范。
 
@@ -302,7 +302,7 @@ META-INF/service/；META-INF/dubbo/; META-INF/dubbo/internal/
 
 ​         这些扩展类的加载交给了 dubbo 中定义的 ExtensionLoader类来负责加载
 
-![1539606713615](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606713615.png)        
+![1539606713615](assets/1539606713615.png)        
 
 友情提示：Alibaba 的dubbo  现在交给apache 维护了
 
@@ -329,7 +329,7 @@ private static final int n = 100;
 
 在准备阶段会根据这个值给n赋值       
 
-![img](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606791912.png)
+![img](assets/1539606791912.png)
 
 * 注意 ： 实例变量 在对象实例化的时候分配
 
@@ -361,7 +361,7 @@ public class test {
 
 2.  反编译以后：  
 
-![1539606823200](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539606823200.png)
+![1539606823200](assets/1539606823200.png)
 
 -  直接引用：指针或则内存偏移量地址。引用的对象一定在内存中已经加载
 
@@ -447,7 +447,7 @@ public static void main(String[] args) {
 
 ​	输出结果：                                                             
 
-![1539607023918](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539607023918.png)
+![1539607023918](assets/1539607023918.png)
 
 ​	什么都没有 说明没有　init 操作
 
@@ -484,7 +484,7 @@ public class test {
 ```
 
 ​	下面我们看一下反编译test.class出来的东西，从下图可以看到编译后的情况，直接将100这个值放在了test.class 文件的常量池中                                      
-![1539607055673](https://github.com/Alan-Jun/study-note/blob/master/study-note.assets/1539607055673.png)	
+![1539607055673](assets/1539607055673.png)	
 
 - 通过类名.class获取Class 对象，不会触发类的初始化，但是会有loading 
 
