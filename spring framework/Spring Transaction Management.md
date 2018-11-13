@@ -115,9 +115,665 @@ public interface TransactionStatus extends SavepointManager, Flushable {
 
 ## 事务传播行为
 
-![1540983454912](https://github.com/Alan-Jun/study-note/blob/master/spring%20framework/assets/1540983454912.png)
+| 事务传播行为类型          | 说明                                                         |
+| ------------------------- | ------------------------------------------------------------ |
+| PROPAGATION_REQUIRED      | 1.  在外围方法未开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会使用自己的事务，且事务相互独立，互不干扰。<br/>2. 在外围方法开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会加入到外围方法的事务中，所有`Propagation.REQUIRED`修饰的内部方法和外围方法均属于同一事务，只要一个方法异常，整个事务均回滚 |
+| PROPAGATION_SUPPORTS      | 支持当前事务，如果当前没有事务，就以非事务方式执行。         |
+| PROPAGATION_MANDATORY     | 使用当前的事务，如果当前没有事务，就抛出异常。               |
+| PROPAGATION_REQUIRES_NEW  | 不管外围方法是否开启事务，`Propagation.REQUIRES_NEW`修饰的内部方法都会单独开启自己的独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。 |
+| PROPAGATION_NOT_SUPPORTED | 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。   |
+| PROPAGATION_NEVER         | 以非事务方式执行，如果当前存在事务，则抛出异常。             |
+| PROPAGATION_NESTED        | 1.如果外围方法存在事务，`Propagation.NESTED`修饰的内部方法属于外部事务的子事务，外围主事务回滚，子事务一定回滚，而内部子事务可以单独回滚（[详细实例](#PROPAGATION_NESTED)）而不影响外围主事务和其他子事务<br/>2.如果外围方法没有事务，则执行与PROPAGATION_REQUIRED类似的效果。 |
 
-# 声明式事务管理
+**事务的传播行为，主要看内层方法的事务传播行为是什么样的，决定了怎么去传播**
+
+### PROPAGATION_REQUIRED
+
+* 在外围方法未开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会使用自己的事务，且事务相互独立，互不干扰。
+* 在外围方法开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会加入到外围方法的事务中，所有`Propagation.REQUIRED`修饰的内部方法和外围方法均属于同一事务，只要一个方法异常，整个事务均回滚
+
+**下面我们来证明一下**
+
+#### 前置条件
+
+**请不要太过在意这个的事务类的结构定义，只是为了测试**
+
+数据表：
+
+![1542073400223](E:\文档\study-note\spring framework\assets\1542073400223.png)
+
+Repository 层的方法：我们给相应的方法都加上 `PROPAGATION_REQUIRED`
+
+```java
+@Repository("accountDao")
+public class AccounDaoImp implements AccountDao {
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void outMoney(String account, Double money) {
+        String sql = " update account set money = money - ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void inMoney(String account, Double money) {
+        String sql = " update account set money = money + ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public void inMoneyThrowException(String account, Double money) {
+        String sql = " update account set money = money + ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+        throw new RuntimeException(" 我发生异常了 ");
+    }
+}
+```
+
+测试调用的方法：
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:applicationContext4.xml")
+public class TestDemoAllByAnnotation {
+
+    @Resource(name = "accountService")
+    private AccountService accountService;
+
+    @Test
+    public void test1() {
+        accountService.transfer("aaa","bbb",200.0);
+    }
+}
+```
+
+
+
+#### 外层方法没有事务的情况下：
+
+验证方法1：
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+
+    @Resource(name = "accountDao")
+    private AccountDao accountDao;
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    @Override
+    //@Transactional(rollbackFor = {Exception.class}) 外层方法没有事务
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        accountDao.inMoney(inAccount,money);
+      // 看一下外层方法抛出异常对两个内层方法的事务是否有影响
+        int a =  1 / 0 ;
+    }
+}
+```
+
+验证方法2：
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+		
+  	// 省略部分代码
+  
+    @Override
+    //@Transactional(rollbackFor = {Exception.class}) 外层方法没有事务
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+      // 看一下内层方法抛出异常对两个内层方法的事务是否有影响
+        accountDao.inMoneyThrowException(inAccount,money);
+    }
+}
+```
+
+**执行方法前的数据都是一样的**
+
+执行方法1的结果：
+
+![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+
+**两个方法正常执行，并且事务被提交**
+
+执行方法2的结果：
+
+![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+
+**抛出异常的方法的事务回滚了**
+
+
+
+**结论：通过这两个方法我们证明了在外围方法未开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会使用自己的事务，且事务相互独立，互不干扰。。**
+
+#### 外层方法开启事务的情况下：
+
+验证方法1：外层方法异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+  
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        accountDao.inMoney(inAccount,money);
+      // 看看外层开启事务的情况下，外层抛出异常的执行情况
+        int a =  1 / 0 ; 
+    }
+}
+```
+
+验证方法2：内层方法异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+  
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+      // 看看外层开启事务的情况下，内层方法抛出异常的执行情况
+        accountDao.inMoneyThrowException(inAccount,money);
+    }
+}
+```
+
+验证方法3：内层方法异常，外层捕获异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+    
+		@Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        try {
+            accountDao.inMoneyThrowException(inAccount,money);
+        }catch (RuntimeException e){
+            System.out.println("----------------- 捕获到异常 ------------------");
+        }
+    }
+}
+
+```
+
+**执行方法前的数据都是一样的**
+
+执行方法1的结果：
+
+![1542074660108](E:\文档\study-note\spring framework\assets\1542074660108.png)
+
+**数据没有任何变化，事务回滚了所有操作**
+
+执行方法2的结果：
+
+![1542074660108](E:\文档\study-note\spring framework\assets\1542074660108.png)
+
+**数据也没有任何变化，事务回滚了所有操作**
+
+执行方法3的结果：
+
+![1542074660108](E:\文档\study-note\spring framework\assets\1542074660108.png)
+
+控制台输出：
+
+```
+----------------- 捕获到异常 ------------------
+```
+
+**异常被正常捕获**
+
+**数据也没有任何变化，即使外层不活了异常但是事务还是回滚了所有操作**
+
+
+
+**结论：以上试验结果我们证明在外围方法开启事务的情况下Propagation.REQUIRED修饰的内部方法会加入到外围方法的事务中，所有Propagation.REQUIRED修饰的内部方法和外围方法均属于同一事务，只要一个方法异常，整个事务均回滚。**
+
+### PROPAGATION_REQUIRES_NEW
+
+* 不管外围方法是否开启事务，`Propagation.REQUIRES_NEW`修饰的内部方法都会单独开启自己的独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。
+
+#### 前置条件
+
+Repository 层的方法：我们给相应的方法都加上 `PROPAGATION_REQUIRES_NEW`
+
+```java
+@Repository("accountDao")
+public class AccounDaoImp implements AccountDao {
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {Exception.class})
+    public void outMoney(String account, Double money) {
+        String sql = " update account set money = money - ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {Exception.class})
+    public void inMoney(String account, Double money) {
+        String sql = " update account set money = money + ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {Exception.class})
+    public void inMoneyThrowException(String account, Double money) {
+        String sql = " update account set money = money + ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+        throw new RuntimeException(" 我发生异常了 ");
+    }
+}
+```
+
+
+
+#### 外层方法没有事务的情况下：
+
+验证方法1：
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+
+    @Resource(name = "accountDao")
+    private AccountDao accountDao;
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    @Override
+    //@Transactional(rollbackFor = {Exception.class}) 外层方法没有事务
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        accountDao.inMoney(inAccount,money);
+      // 看一下外层方法抛出异常对两个内层方法的事务是否有影响
+        int a =  1 / 0 ;
+    }
+}
+```
+
+验证方法2：
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+		
+  	// 省略部分代码
+  
+    @Override
+    //@Transactional(rollbackFor = {Exception.class}) 外层方法没有事务
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+      // 看一下内层方法抛出异常对两个内层方法的事务是否有影响
+        accountDao.inMoneyThrowException(inAccount,money);
+    }
+}
+```
+
+**执行方法前的数据都是一样的**
+
+执行方法1的结果：
+
+![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+
+**两个方法正常执行，并且事务被提交**
+
+执行方法2的结果：
+
+![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+
+**抛出异常的方法的事务回滚了**
+
+**结论：通过这两个方法我们证明了在外围方法未开启事务的情况下`Propagation.REQUIRES_NEW`修饰的内部方法会使用自己的事务，且事务相互独立，互不干扰。。**
+
+#### 外层方法开启事务的情况下：
+
+验证方法1：外层方法异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+  
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        accountDao.inMoney(inAccount,money);
+      // 看看外层开启事务的情况下，外层抛出异常的执行情况
+        int a =  1 / 0 ; 
+    }
+}
+```
+
+验证方法2：内层方法异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+  
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+      // 看看外层开启事务的情况下，内层方法抛出异常的执行情况
+        accountDao.inMoneyThrowException(inAccount,money);
+    }
+}
+```
+
+验证方法3：内层方法异常，外层捕获异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+    
+		@Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        try {
+            accountDao.inMoneyThrowException(inAccount,money);
+        }catch (RuntimeException e){
+            System.out.println("----------------- 捕获到异常 ------------------");
+        }
+    }
+}
+
+```
+
+执行方法1的结果：
+
+![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+
+**两个方法正常执行，并且事务被提交**
+
+执行方法2的结果：
+
+![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+
+**抛出异常的方法的事务回滚了**
+
+执行方法3的结果：
+
+![1542074660108](E:\文档\study-note\spring framework\assets\1542073851874.png)
+
+控制台输出：
+
+```
+----------------- 捕获到异常 ------------------
+```
+
+**异常被正常捕获**
+
+**抛出异常的方法的事务回滚了**
+
+
+
+**结论：在外围方法开启事务的情况下Propagation.REQUIRES_NEW修饰的内部方法依然会单独开启独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。**
+
+### PROPAGATION_NESTED
+
+* 如果外围方法存在事务，`Propagation.NESTED`修饰的内部方法属于外部事务的子事务，外围主事务回滚，子事务一定回滚，而内部子事务可以单独回滚（例子见下文）而不影响外围主事务和其他子事务
+* 如果外围方法没有事务，则执行与PROPAGATION_REQUIRED类似的效果。
+
+#### 前置条件
+
+Repository 层的方法：我们给相应的方法都加上 `PROPAGATION_REQUIRES_NEW`
+
+```java
+@Repository("accountDao")
+public class AccounDaoImp implements AccountDao {
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    @Transactional(propagation = Propagation.NESTED, rollbackFor = {Exception.class})
+    public void outMoney(String account, Double money) {
+        String sql = " update account set money = money - ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.NESTED, rollbackFor = {Exception.class})
+    public void inMoney(String account, Double money) {
+        String sql = " update account set money = money + ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.NESTED, rollbackFor = {Exception.class})
+    public void inMoneyThrowException(String account, Double money) {
+        String sql = " update account set money = money + ? where name = ? ";
+        jdbcTemplate.update(sql, money, account);
+        throw new RuntimeException(" 我发生异常了 ");
+    }
+}
+```
+
+
+
+#### 外层方法没有事务的情况下：
+
+验证方法1：
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+
+    @Resource(name = "accountDao")
+    private AccountDao accountDao;
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    @Override
+    //@Transactional(rollbackFor = {Exception.class}) 外层方法没有事务
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        accountDao.inMoney(inAccount,money);
+      // 看一下外层方法抛出异常对两个内层方法的事务是否有影响
+        int a =  1 / 0 ;
+    }
+}
+```
+
+验证方法2：
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+		
+  	// 省略部分代码
+  
+    @Override
+    //@Transactional(rollbackFor = {Exception.class}) 外层方法没有事务
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+      // 看一下内层方法抛出异常对两个内层方法的事务是否有影响
+        accountDao.inMoneyThrowException(inAccount,money);
+    }
+}
+```
+
+**执行方法前的数据都是一样的**
+
+执行方法1的结果：
+
+![1542073652363](E:\文档\study-note\spring framework\assets\1542073652363.png)
+
+**两个方法正常执行，并且事务被提交**
+
+执行方法2的结果：
+
+![1542073851874](E:\文档\study-note\spring framework\assets\1542073851874.png)
+
+**抛出异常的方法的事务回滚了**
+
+**结论：通过这两个方法我们证明了在外围方法未开启事务的情况下`Propagation.NESTED`和`Propagation.REQUIRED`作用相同，修饰的内部方法会使用自己的事务，且事务相互独立，互不干扰。。**
+
+#### 外层方法开启事务的情况下：
+
+验证方法1：外层方法异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+  
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        accountDao.inMoney(inAccount,money);
+      // 看看外层开启事务的情况下，外层抛出异常的执行情况
+        int a =  1 / 0 ; 
+    }
+}
+```
+
+验证方法2：内层方法异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+  
+    @Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+      // 看看外层开启事务的情况下，内层方法抛出异常的执行情况
+        accountDao.inMoneyThrowException(inAccount,money);
+    }
+}
+```
+
+验证方法3：内层方法异常，外层捕获异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+    
+		@Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        try {
+            accountDao.inMoneyThrowException(inAccount,money);
+        }catch (RuntimeException e){
+            System.out.println("----------------- 捕获到异常 ------------------");
+        }
+    }
+}
+
+```
+
+验证方法4：内层方法异常，外层捕获异常
+
+```java
+@Service("accountService")
+public class AccountServiceImp implements AccountService {
+	
+		// 省略部分代码
+    
+		@Override
+    @Transactional(rollbackFor = {Exception.class})
+    public void transfer(String outAccount, String inAccount, Double money) {
+        accountDao.outMoney(outAccount,money);
+        try {
+            accountDao.inMoneyThrowException(inAccount,money);
+        }catch (RuntimeException e){
+            System.out.println("----------------- 捕获到异常 ------------------");
+        }
+      // 验证只回滚子事务
+      	accountDao.inMoney(inAccount,money);
+    }
+}
+```
+
+执行方法1的结果：
+
+![1542073652363](E:\文档\study-note\spring framework\assets\1542074660108.png)
+
+**外部方法异常回滚，内部方法也全部回滚**
+
+执行方法2的结果：
+
+![1542073851874](E:\文档\study-note\spring framework\assets\1542074660108.png)
+
+**抛出异常的方法的事务回滚了，由于外部方法没有捕获该内部方法异常，所以全部回滚了**
+
+执行方法3的结果：
+
+![1542074660108](E:\文档\study-note\spring framework\assets\1542073851874.png)
+
+控制台输出：
+
+```
+----------------- 捕获到异常 ------------------
+```
+
+**内部方法异常被外部方法正常捕获**
+
+**抛出异常的方法的事务回滚了**
+
+执行方法4的结果：
+
+![1542074660108](E:\文档\study-note\spring framework\assets\1542073652363.png)
+
+控制台输出：
+
+```
+----------------- 捕获到异常 ------------------
+```
+
+**内部方法异常被外部方法正常捕获**
+
+**抛出异常的方法的事务回滚了**
+
+**但是由于异常被正常捕获，外部方法继续执行，后续的执行事务被正常提交**
+
+
+
+**结论：以上试验结果我们证明在外围方法开启事务的情况下`Propagation.NESTED`修饰的内部方法属于外部事务的子事务，外围主事务回滚，子事务一定回滚，而内部子事务可以单独回滚而不影响外围主事务和其他子事务**。
+
+
 
 ## 1. 配置代理的方式
 
