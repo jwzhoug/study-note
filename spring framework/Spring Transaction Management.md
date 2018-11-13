@@ -919,7 +919,7 @@ public class AccountServiceImp implements AccountService {
 
 **可以作用于接口、接口方法、类以及类方法上**
 
-**使用这个注解需要注意要使用 `<tx:annotation-driven/>`元素将打开事务行为**。
+**使用这个注解需要注意要使用 `<tx:annotation-driven/>`元素打开事务行为**。
 
 **Spring团队建议您使用注释仅注释具体类（以及具体类的方法）`@Transactional`，而不是注释接口或接口方法，因为那样只有在使用基于接口的代理时它才会生效**。
 
