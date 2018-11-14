@@ -218,7 +218,7 @@ execution( modifiers-pattern? ret-type-pattern declaring-type-pattern?name-patte
 - 执行任何公共方法：
 
 ```java
-execution(public * *(..))
+ execution(public * *(..))
 ```
 
 - 名称以“set”开头的任何方法的执行：
@@ -244,6 +244,14 @@ execution(* com.xyz.service.*.*(..))
 ```java
 execution(* com.xyz.service..*.*(..))
 ```
+
+- `AccountService`	和其子类的任何方法
+
+```java
+execution(* com.xyz.service.AccountService+.*(..))
+```
+
+
 
 #### `args` 
 
@@ -1133,6 +1141,8 @@ public class AopByAnnotationTest extends UnitTestBase {
 ```
 
 ## 6.5 advisor
+
+这个主要是在事务管理中使用，` aspect`可以配置多个`advice`,  `advisor` 配置配置一个`advice`并且对应一个`PointCut`
 
 # 6.6 spring AOP API
 
